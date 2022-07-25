@@ -1,0 +1,32 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/justincpresley/go-cobs"
+)
+
+func main() {
+	var config cobs.Config
+	config.SpecialByte = 0x00
+	config.Deliminator = true
+
+	message := "AAAAAAAAAAAAAAAAA"
+	raw := []byte(message)
+
+	fmt.Println("Config Special", config.SpecialByte, "Deliminator", config.Deliminator)
+	fmt.Println("Message:", message)
+	fmt.Println("Message Bytes:", raw)
+
+	encoded := cobs.Encode(raw, config)
+	fmt.Println("Encoded:", encoded)
+
+	if !cobs.Verify(encoded, config) {
+		fmt.Println("Status: CORRUPTED")
+	}
+	fmt.Println("Status: VALID")
+
+	decoded := cobs.Decode(encoded, config)
+	fmt.Println("Decoded:", decoded)
+	fmt.Println("Message:", string(decoded))
+}
