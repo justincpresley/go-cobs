@@ -2,7 +2,7 @@ package cobs
 
 type Config struct {
 	SpecialByte byte
-	Deliminator bool
+	Delimiter   bool
 }
 
 func Encode(src []byte, config Config) (dst []byte) {
@@ -40,7 +40,7 @@ func Encode(src []byte, config Config) (dst []byte) {
 	} else {
 		dst[codePtr] = code
 	}
-	if config.Deliminator {
+	if config.Delimiter {
 		dst = append(dst, config.SpecialByte)
 	}
 	return dst
@@ -50,7 +50,7 @@ func Decode(src []byte, config Config) (dst []byte) {
 	loopLen := len(src)
 	// the cap needs optimization
 	dst = make([]byte, 0, loopLen-1-(loopLen/254))
-	if config.Deliminator {
+	if config.Delimiter {
 		loopLen--
 	}
 	ptr := 0
@@ -76,7 +76,7 @@ func Decode(src []byte, config Config) (dst []byte) {
 func Verify(src []byte, config Config) (success bool) {
 	nextFlag := 0
 	srcLen := len(src)
-	if config.Deliminator {
+	if config.Delimiter {
 		if srcLen < 2 {
 			return false
 		}
@@ -121,7 +121,7 @@ func Verify(src []byte, config Config) (success bool) {
 }
 
 func WorseCase(dLen int, config Config) (eLen int) {
-	if config.Deliminator {
+	if config.Delimiter {
 		return dLen + 2 + (dLen / 254)
 	} else {
 		return dLen + 1 + (dLen / 254)
@@ -129,7 +129,7 @@ func WorseCase(dLen int, config Config) (eLen int) {
 }
 
 func BestCase(dLen int, config Config) (eLen int) {
-	if config.Deliminator {
+	if config.Delimiter {
 		return dLen + 2
 	} else {
 		return dLen + 1

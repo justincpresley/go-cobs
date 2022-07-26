@@ -1,32 +1,31 @@
-package main
+package cobs
 
 import (
 	"fmt"
-
-	"github.com/justincpresley/go-cobs"
+	"testing"
 )
 
-func main() {
-	var config cobs.Config
-	config.SpecialByte = 0x00
-	config.Delimiter = true
+func TestBasicFeatures(t *testing.T) {
+  config := Config{
+    SpecialByte: 0x00,
+    Delimiter:  true,
+  }
+	message := "AAAAAAAAAAAAA"
 
-	message := "AAAAAAAAAAAAAAAAA"
-	raw := []byte(message)
-
+  raw := []byte(message)
 	fmt.Println("Config Special", config.SpecialByte, "Delimiter", config.Delimiter)
 	fmt.Println("Message:", message)
 	fmt.Println("Message Bytes:", raw)
 
-	encoded := cobs.Encode(raw, config)
+	encoded := Encode(raw, config)
 	fmt.Println("Encoded:", encoded)
 
-	if !cobs.Verify(encoded, config) {
+	if !Verify(encoded, config) {
 		fmt.Println("Status: CORRUPTED")
 	}
 	fmt.Println("Status: VALID")
 
-	decoded := cobs.Decode(encoded, config)
+	decoded := Decode(encoded, config)
 	fmt.Println("Decoded:", decoded)
 	fmt.Println("Message:", string(decoded))
 }
