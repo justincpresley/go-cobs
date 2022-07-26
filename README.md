@@ -2,11 +2,9 @@
 
 This Go library provides an API which allows all COBS-related functionality to the programmer.
 
-
 *What is Consistent Overhead Byte Stuffing (COBS)?*
 
-Links: [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing)- [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
-
+Links: [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
 
 Effectively, the goal of COBS is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
 
