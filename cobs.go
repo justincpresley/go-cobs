@@ -1,10 +1,15 @@
 package cobs
 
+// Config is a struct that holds configuration variables on how
+// this COBS library will function. It can be customized according
+// to the use case.
 type Config struct {
 	SpecialByte byte
 	Delimiter   bool
 }
 
+// Encode takes raw data and a configuration and produces the COBS-encoded
+// byte slice.
 func Encode(src []byte, config Config) (dst []byte) {
 	srcLen := len(src) + 1
 	dst = make([]byte, 1, srcLen)
@@ -46,6 +51,8 @@ func Encode(src []byte, config Config) (dst []byte) {
 	return dst
 }
 
+// Decode takes encoded data and a configuration and produces the raw COBS-decoded
+// byte slice.
 func Decode(src []byte, config Config) (dst []byte) {
 	loopLen := len(src)
 	// the cap needs optimization
@@ -73,6 +80,9 @@ func Decode(src []byte, config Config) (dst []byte) {
 	return dst
 }
 
+// Verify checks whether the given raw data can be a valid COBS-encoded byte slice
+// based on the configuration. It checks to see if the special byte appears and
+// whether the flags -lead- toward the end of the slice.
 func Verify(src []byte, config Config) (success bool) {
 	nextFlag := 0
 	srcLen := len(src)
@@ -120,6 +130,8 @@ func Verify(src []byte, config Config) (success bool) {
 	return true
 }
 
+// Worse Case calculates the worse case for the COBS overhead when given
+// a raw length and an appropiate configuration.
 func WorseCase(dLen int, config Config) (eLen int) {
 	if config.Delimiter {
 		return dLen + 2 + (dLen / 254)
@@ -128,6 +140,8 @@ func WorseCase(dLen int, config Config) (eLen int) {
 	}
 }
 
+// Best Case calculates the best case for the COBS overhead when given
+// a raw length and an appropiate configuration.
 func BestCase(dLen int, config Config) (eLen int) {
 	if config.Delimiter {
 		return dLen + 2
