@@ -72,6 +72,6 @@ It would be an interesting to find what the optimal amount of flags is to provid
 
 The API is subject to check as plan to incorporate the following features in future releases:
 
- - A function that combines `Encode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
+ - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
  - Implement `FlaggableDelimiters` to reduce the COBS encoding overhead (up to one byte) by combining the delimiter and the last byte if its a flag.
  - Implement `COBS/R`.
