@@ -1,12 +1,19 @@
 package cobs
 
+type Type int
+
+const (
+	Normal  Type = 1
+	Reduced Type = 2
+)
+
 // Config is a struct that holds configuration variables on how
 // this COBS library will function. It can be customized according
 // to the use case.
 type Config struct {
 	SpecialByte byte
 	Delimiter   bool
-	Reduced     bool
+	Type        Type
 }
 
 // Encode takes raw data and a configuration and produces the COBS-encoded
@@ -41,7 +48,7 @@ func Encode(src []byte, config Config) (dst []byte) {
 			code = 0x01
 		}
 	}
-	if config.Reduced {
+	if config.Type == Reduced {
 		if int(src[srcLen-1]) > (len(dst)-codePtr) && src[srcLen-1] != config.SpecialByte {
 			code = src[srcLen-1]
 			dst = dst[:len(dst)-1]
@@ -90,7 +97,7 @@ func Decode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, config.SpecialByte)
 		}
 	}
-	if config.Reduced {
+	if config.Type == Reduced {
 		dst = append(dst, code)
 	}
 	return dst
@@ -125,7 +132,7 @@ func Verify(src []byte, config Config) (success bool) {
 		}
 		nextFlag--
 	}
-	if nextFlag != 0 && !config.Reduced {
+	if nextFlag != 0 && config.Type != Reduced {
 		return false
 	}
 	return true
@@ -153,7 +160,7 @@ func BestCase(dLen int, config Config) (eLen int) {
 	if config.Delimiter {
 		eLen++
 	}
-	if config.Reduced {
+	if config.Type == Reduced {
 		eLen--
 	}
 	return eLen
