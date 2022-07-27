@@ -131,7 +131,7 @@ func Verify(src []byte, config Config) (success bool) {
 	return true
 }
 
-// Worse Case calculates the worse case for the COBS overhead when given
+// WorseCase calculates the worse case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func WorseCase(dLen int, config Config) (eLen int) {
 	eLen = dLen + 1 + (dLen / 254)
@@ -141,7 +141,12 @@ func WorseCase(dLen int, config Config) (eLen int) {
 	return eLen
 }
 
-// Best Case calculates the best case for the COBS overhead when given
+// MaxOverhead is an alias for WorseCase.
+func MaxOverhead(dLen int, config Config) (eLen int) {
+	return WorseCase(dLen, config)
+}
+
+// BestCase calculates the best case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func BestCase(dLen int, config Config) (eLen int) {
 	eLen = dLen + 1
@@ -152,4 +157,9 @@ func BestCase(dLen int, config Config) (eLen int) {
 		eLen--
 	}
 	return eLen
+}
+
+// MinOverhead is an alias for BestCase.
+func MinOverhead(dLen int, config Config) (eLen int) {
+	return BestCase(dLen, config)
 }
