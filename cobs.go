@@ -48,7 +48,7 @@ func Decode(src []byte, config Config) (dst []byte) {
 // Verify checks whether the given raw data can be a valid COBS-encoded byte slice
 // based on the configuration. It can not only check to see if the special byte appears
 // but also can see if the flags -lead- towards the end of the slice.
-func Verify(src []byte, config Config) (success bool) {
+func Verify(src []byte, config Config) (err error) {
 	switch config.Type {
 	case Native:
 	  return nativeVerify(src, config)

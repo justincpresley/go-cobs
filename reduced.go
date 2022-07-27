@@ -1,5 +1,9 @@
 package cobs
 
+import (
+	"errors"
+)
+
 func reducedEncode(src []byte, config Config) (dst []byte) {
 	srcLen := len(src)
 	dst = make([]byte, 1, srcLen+1)
@@ -80,22 +84,25 @@ func reducedDecode(src []byte, config Config) (dst []byte) {
 	return append(dst, code)
 }
 
-func reducedVerify(src []byte, config Config) (success bool) {
+func reducedVerify(src []byte, config Config) (err error) {
 	loopLen := len(src)
 	if config.Delimiter {
-		if loopLen < 2 || src[loopLen-1] != config.SpecialByte {
-			return false
+		if loopLen < 2 {
+			return errors.New("COBS[Reduced]: Encoded slice is too short to be valid.")
+		}
+		if src[loopLen-1] != config.SpecialByte {
+			return errors.New("COBS[Reduced]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
 	} else {
 		if loopLen < 1 {
-			return false
+			return errors.New("COBS[Reduced]: Encoded slice is too short to be valid.")
 		}
 	}
 	for _, b := range src[:loopLen] {
 		if b == config.SpecialByte {
-			return false
+			return errors.New("COBS[Native]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 	}
-	return true
+	return nil
 }

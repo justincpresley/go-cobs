@@ -21,8 +21,10 @@ func TestBasicFeatures(t *testing.T) {
 	encoded := Encode(raw, config)
 	fmt.Println("Encoded:", encoded)
 
-	if !Verify(encoded, config) {
+	if ok := Verify(encoded, config); ok != nil {
 		fmt.Println("Status: CORRUPTED")
+		fmt.Println("Error:", ok)
+		return
 	}
 	fmt.Println("Status: VALID")
 

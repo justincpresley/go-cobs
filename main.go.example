@@ -7,22 +7,26 @@ import (
 )
 
 func main() {
-	var config cobs.Config
-	config.SpecialByte = 0x00
-	config.Delimiter = true
+	config := cobs.Config{
+		SpecialByte: 0x00,
+		Delimiter:   true,
+		Type:        Reduced,
+	}
 
 	message := "AAAAAAAAAAAAAAAAA"
 	raw := []byte(message)
 
-	fmt.Println("Config Special", config.SpecialByte, "Delimiter", config.Delimiter)
+	fmt.Println("Config | Special", config.SpecialByte, "Delimiter", config.Delimiter, "Type", config.Type, "|")
 	fmt.Println("Message:", message)
 	fmt.Println("Message Bytes:", raw)
 
 	encoded := cobs.Encode(raw, config)
 	fmt.Println("Encoded:", encoded)
 
-	if !cobs.Verify(encoded, config) {
+	if ok := cobs.Verify(encoded, config); ok != nil {
 		fmt.Println("Status: CORRUPTED")
+		fmt.Println("Error:", ok)
+		return
 	}
 	fmt.Println("Status: VALID")
 

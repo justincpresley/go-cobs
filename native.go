@@ -1,5 +1,9 @@
 package cobs
 
+import (
+	"errors"
+)
+
 func nativeEncode(src []byte, config Config) (dst []byte) {
 	srcLen := len(src)
 	dst = make([]byte, 1, srcLen+1)
@@ -68,22 +72,25 @@ func nativeDecode(src []byte, config Config) (dst []byte) {
 	return dst
 }
 
-func nativeVerify(src []byte, config Config) (success bool) {
+func nativeVerify(src []byte, config Config) (err error) {
 	nextFlag := 0
 	loopLen := len(src)
 	if config.Delimiter {
-		if loopLen < 2 || src[loopLen-1] != config.SpecialByte {
-			return false
+		if loopLen < 2 {
+			return errors.New("COBS[Native]: Encoded slice is too short to be valid.")
+		}
+		if src[loopLen-1] != config.SpecialByte {
+			return errors.New("COBS[Native]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
 	} else {
 		if loopLen < 1 {
-			return false
+			return errors.New("COBS[Native]: Encoded slice is too short to be valid.")
 		}
 	}
 	for _, b := range src[:loopLen] {
 		if b == config.SpecialByte {
-			return false
+			return errors.New("COBS[Native]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0 {
@@ -95,7 +102,7 @@ func nativeVerify(src []byte, config Config) (success bool) {
 		nextFlag--
 	}
 	if nextFlag != 0 {
-		return false
+		return errors.New("COBS[Native]: Encoded slice's flags do not lead to end.")
 	}
-	return true
+	return nil
 }
