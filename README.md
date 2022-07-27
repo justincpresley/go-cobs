@@ -71,10 +71,13 @@ func main() {
 
 It would be an interesting to find what the optimal amount of flags is to provide the best integrity checking for given data.
 
-The API is subject to check as plan to incorporate the following features in future releases:
+The API is subject to change based on future additions.
 
+Currently, I am planning for the following to be released in the future:
+
+ - Release 1.0.0 of this library.
  - Create concrete the basic and in-depth testing.
- - 
+ - Expand upon errors (why did verify produce a false).
  - Create `FlagCount()` function.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
  - Implement `COBS/ZPE` and/or `COBS/ZRE`.
