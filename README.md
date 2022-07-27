@@ -13,6 +13,7 @@ Comparatively, this library offers combined functionality not found within any o
  - **Be able to choose whether the Delimiter (Special byte) is added.** Libraries tend to only given one option.
  - **Be able to choose what the Special Byte is.** Every other library uses the NULL (0x00) byte only.
  - **Be able to use COBS as a Layer of Integrity.** By ensuring that the special byte does not occur (expect with a delimiter) and by ensuring that the flags lead to the end of the data, COBS can provide a small layer of integrity.
+ - **Be able to use COBS/R (Reduced overhead).** This method is created and described [here](https://github.com/cmcqueen/cobs-c). Note by reducing, the flag-based integrity is destroyed.
  - **Additional API Commands.** Not only is there functions to calculate the worst/best case for COBS, but there is also flag-related functions.
 
 ## Documentation
@@ -73,5 +74,4 @@ It would be an interesting to find what the optimal amount of flags is to provid
 The API is subject to check as plan to incorporate the following features in future releases:
 
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
- - Implement `FlaggableDelimiters` to reduce the COBS encoding overhead (up to one byte) by combining the delimiter and the last byte if its a flag.
- - Implement `COBS/R`.
+ - Implement `COBS/ZPE` or `COBS/ZPE`.

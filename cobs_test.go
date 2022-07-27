@@ -6,13 +6,13 @@ import (
 )
 
 func TestBasicFeatures(t *testing.T) {
-  config := Config{
-    SpecialByte: 0x00,
-    Delimiter:  true,
-  }
+	config := Config{
+		SpecialByte: 0x00,
+		Delimiter:   true,
+	}
 	message := "AAAAAAAAAAAAA"
 
-  raw := []byte(message)
+	raw := []byte(message)
 	fmt.Println("Config Special", config.SpecialByte, "Delimiter", config.Delimiter)
 	fmt.Println("Message:", message)
 	fmt.Println("Message Bytes:", raw)
