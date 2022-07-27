@@ -75,4 +75,4 @@ The API is subject to check as plan to incorporate the following features in fut
 
  - Create `FlagCount()` function.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
- - Implement `COBS/ZPE` or `COBS/ZPE`.
+ - Implement `COBS/ZPE` and/or `COBS/ZRE`.
