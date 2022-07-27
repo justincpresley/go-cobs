@@ -73,6 +73,8 @@ It would be an interesting to find what the optimal amount of flags is to provid
 
 The API is subject to check as plan to incorporate the following features in future releases:
 
+ - Create concrete the basic and in-depth testing.
+ - 
  - Create `FlagCount()` function.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
  - Implement `COBS/ZPE` and/or `COBS/ZRE`.
