@@ -6,13 +6,14 @@ package cobs
 type Config struct {
 	SpecialByte byte
 	Delimiter   bool
+	Reduced     bool
 }
 
 // Encode takes raw data and a configuration and produces the COBS-encoded
 // byte slice.
 func Encode(src []byte, config Config) (dst []byte) {
-	srcLen := len(src) + 1
-	dst = make([]byte, 1, srcLen)
+	srcLen := len(src)
+	dst = make([]byte, 1, srcLen+1)
 	codePtr := 0
 	code := byte(0x01)
 	for _, b := range src {
@@ -40,6 +41,12 @@ func Encode(src []byte, config Config) (dst []byte) {
 			code = 0x01
 		}
 	}
+	if config.Reduced {
+		if int(src[srcLen-1]) > (len(dst)-codePtr) && src[srcLen-1] != config.SpecialByte {
+			code = src[srcLen-1]
+			dst = dst[:len(dst)-1]
+		}
+	}
 	if code == config.SpecialByte {
 		dst[codePtr] = 0x00
 	} else {
@@ -61,6 +68,7 @@ func Decode(src []byte, config Config) (dst []byte) {
 		loopLen--
 	}
 	ptr := 0
+	jumpLen := 0
 	code := byte(0x00)
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
@@ -69,13 +77,21 @@ func Decode(src []byte, config Config) (dst []byte) {
 			code = src[ptr]
 		}
 		ptr++
-		for i := 1; i < int(code); i++ {
+		if int(code) > (loopLen - ptr) {
+			jumpLen = loopLen - ptr + 1
+		} else {
+			jumpLen = int(code)
+		}
+		for i := 1; i < jumpLen; i++ {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
 		if code < 0xFF && ptr < loopLen {
 			dst = append(dst, config.SpecialByte)
 		}
+	}
+	if config.Reduced {
+		dst = append(dst, code)
 	}
 	return dst
 }
@@ -85,67 +101,65 @@ func Decode(src []byte, config Config) (dst []byte) {
 // whether the flags -lead- toward the end of the slice.
 func Verify(src []byte, config Config) (success bool) {
 	nextFlag := 0
-	srcLen := len(src)
+	loopLen := len(src)
 	if config.Delimiter {
-		if srcLen < 2 {
+		if loopLen < 2 || src[loopLen-1] != config.SpecialByte {
 			return false
 		}
-		for _, b := range src[:srcLen-1] {
-			if b == config.SpecialByte {
-				return false
-			}
-			if nextFlag == 0 {
-				if b == 0 {
-					nextFlag = int(config.SpecialByte)
-				} else {
-					nextFlag = int(b)
-				}
-			}
-			nextFlag--
-		}
-		if nextFlag != 0 || src[srcLen-1] != config.SpecialByte {
-			return false
-		}
+		loopLen--
 	} else {
-		if srcLen < 1 {
+		if loopLen < 1 {
 			return false
 		}
-		for _, b := range src[:srcLen] {
-			if b == config.SpecialByte {
-				return false
-			}
-			if nextFlag == 0 {
-				if b == 0 {
-					nextFlag = int(config.SpecialByte)
-				} else {
-					nextFlag = int(b)
-				}
-			}
-			nextFlag--
-		}
-		if nextFlag != 0 {
+	}
+	for _, b := range src[:loopLen] {
+		if b == config.SpecialByte {
 			return false
 		}
+		if nextFlag == 0 {
+			if b == 0 {
+				nextFlag = int(config.SpecialByte)
+			} else {
+				nextFlag = int(b)
+			}
+		}
+		nextFlag--
+	}
+	if nextFlag != 0 && !config.Reduced {
+		return false
 	}
 	return true
 }
 
-// Worse Case calculates the worse case for the COBS overhead when given
+// WorseCase calculates the worse case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func WorseCase(dLen int, config Config) (eLen int) {
+	eLen = dLen + 1 + (dLen / 254)
 	if config.Delimiter {
-		return dLen + 2 + (dLen / 254)
-	} else {
-		return dLen + 1 + (dLen / 254)
+		eLen++
 	}
+	return eLen
 }
 
-// Best Case calculates the best case for the COBS overhead when given
+// MaxOverhead is an alias for WorseCase.
+func MaxOverhead(dLen int, config Config) (eLen int) {
+	return WorseCase(dLen, config)
+}
+
+// BestCase calculates the best case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func BestCase(dLen int, config Config) (eLen int) {
+	eLen = dLen + 1
 	if config.Delimiter {
-		return dLen + 2
-	} else {
-		return dLen + 1
+		eLen++
 	}
+	if config.Reduced {
+		eLen--
+	}
+	return eLen
+}
+
+// MinOverhead is an alias for BestCase.
+func MinOverhead(dLen int, config Config) (eLen int) {
+	return BestCase(dLen, config)
 }
