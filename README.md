@@ -80,7 +80,6 @@ The API is subject to change based on future additions.
 Currently, I am planning for the following to be released in the future:
 
  - Release 1.0.0 of this library.
- - Create concrete basic and in-depth testing.
- - Create `FlagCount()` function.
+ - Create in-depth testing.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
  - Implement `COBS/ZPE` and/or `COBS/ZRE`.

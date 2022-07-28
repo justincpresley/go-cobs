@@ -65,11 +65,11 @@ func nativeDecode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		if code < 0xFF && ptr < loopLen {
+		if code < 0xFF {
 			dst = append(dst, config.SpecialByte)
 		}
 	}
-	return dst
+	return dst[:len(dst)-1]
 }
 
 func nativeVerify(src []byte, config Config) (err error) {
@@ -105,4 +105,18 @@ func nativeVerify(src []byte, config Config) (err error) {
 		return errors.New("COBS[Native]: Encoded slice's flags do not lead to end.")
 	}
 	return nil
+}
+
+func nativeFlagCount(src []byte, config Config) (flags int) {
+	numFlags := 0
+	ptr := 0
+	for ptr < len(src) {
+		if src[ptr] == 0 {
+			ptr += int(config.SpecialByte)
+		} else {
+			ptr += int(src[ptr])
+		}
+		numFlags++
+	}
+	return numFlags
 }

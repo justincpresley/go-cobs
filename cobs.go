@@ -3,8 +3,8 @@ package cobs
 type Type uint8
 
 // The Following are a list of COBS-Types. Each has differents pros/cons listed below.
-// Native: supports all verification, default protocol.
-// Reduced: flag-based verification is inapplicable, potenially reduces overhead by 1 byte.
+// Native supports all verification and is The default protocol.
+// Reduced potenially reduces overhead by 1 byte but makes flag-based verification inapplicable.
 const (
 	Native  Type = 0
 	Reduced Type = 1
@@ -28,7 +28,7 @@ func Encode(src []byte, config Config) (dst []byte) {
 	case Reduced:
 	  return reducedEncode(src, config)
 	default:
-	  return nil
+	  return
 	}
 }
 
@@ -54,6 +54,19 @@ func Verify(src []byte, config Config) (err error) {
 	  return nativeVerify(src, config)
 	case Reduced:
 	  return reducedVerify(src, config)
+	default:
+	  return
+	}
+}
+
+// FlagCount counts all the flags for given encoded data based on the configuration.
+// While it is not checked nor required, the given data should be verified before hand.
+func FlagCount(src []byte, config Config) (flags int) {
+	switch config.Type {
+	case Native:
+	  return nativeFlagCount(src, config)
+	case Reduced:
+	  return reducedFlagCount(src, config)
 	default:
 	  return
 	}

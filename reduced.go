@@ -77,11 +77,11 @@ func reducedDecode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		if code < 0xFF && ptr < loopLen {
+		if code < 0xFF {
 			dst = append(dst, config.SpecialByte)
 		}
 	}
-	return append(dst, code)
+	return append(dst[:len(dst)-1], code)
 }
 
 func reducedVerify(src []byte, config Config) (err error) {
@@ -105,4 +105,21 @@ func reducedVerify(src []byte, config Config) (err error) {
 		}
 	}
 	return nil
+}
+
+func reducedFlagCount(src []byte, config Config) (flags int) {
+	numFlags := 0
+	ptr := 0
+	for ptr < len(src) {
+		if src[ptr] == 0 {
+			ptr += int(config.SpecialByte)
+		} else {
+			ptr += int(src[ptr])
+		}
+		numFlags++
+	}
+	if ptr != len(src) && config.Delimiter {
+		numFlags++
+	}
+	return numFlags
 }

@@ -1,34 +1,146 @@
 package cobs
 
 import (
-	"fmt"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestBasicFeatures(t *testing.T) {
+func TestNativeBasicFeatures(t *testing.T) {
+	// [Native] Delimiter | 0x00
+	config := Config{
+		SpecialByte: 0x00,
+		Delimiter:   true,
+		Type:        Native,
+	}
+	required_message := "aaaaaaaaaaa"
+	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_encode := []byte{12, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 0}
+	required_decode := required_raw
+
+	raw := []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode := Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode := Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+
+	// [Native] No Delimiter | 0x00
+	config = Config{
+		SpecialByte: 0x00,
+		Delimiter:   false,
+		Type:        Native,
+	}
+	required_message = "aaaaaaaaaaa"
+	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_encode = []byte{12, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_decode = required_raw
+
+	raw = []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode = Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode = Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+
+	// [Native] No Delimiter | 0x61
+	config = Config{
+		SpecialByte: 0x61,
+		Delimiter:   false,
+		Type:        Native,
+	}
+	required_message = "aabbbaabbabbabb"
+	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
+	required_encode = []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 3, 98, 98}
+	required_decode = required_raw
+
+	raw = []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode = Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode = Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+}
+
+func TestReducedBasicFeatures(t *testing.T) {
+	// [Reduced] Delimiter | 0x00
 	config := Config{
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Reduced,
 	}
-	message := "AAAAAAAAAAAAA"
+	required_message := "aaaaaaaaaaa"
+	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_encode := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 0}
+	required_decode := required_raw
 
-	raw := []byte(message)
-	fmt.Println("Config | Special", config.SpecialByte, "Delimiter", config.Delimiter, "Type", config.Type, "|")
-	fmt.Println("Message:", message)
-	fmt.Println("Message Bytes:", raw)
+	raw := []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode := Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode := Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
 
-	encoded := Encode(raw, config)
-	fmt.Println("Encoded:", encoded)
-
-	if ok := Verify(encoded, config); ok != nil {
-		fmt.Println("Status: CORRUPTED")
-		fmt.Println("Error:", ok)
-		return
+	// [Reduced] No Delimiter | 0x00
+	config = Config{
+		SpecialByte: 0x00,
+		Delimiter:   false,
+		Type:        Reduced,
 	}
-	fmt.Println("Status: VALID")
+	required_message = "aaaaaaaaaaa"
+	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_encode = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
+	required_decode = required_raw
 
-	decoded := Decode(encoded, config)
-	fmt.Println("Decoded:", decoded)
-	fmt.Println("Message:", string(decoded))
+	raw = []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode = Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode = Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+
+	// [Reduced] No Delimiter | 0x61
+	config = Config{
+		SpecialByte: 0x61,
+		Delimiter:   false,
+		Type:        Reduced,
+	}
+	required_message = "aabbbaabbabbabb"
+	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
+	required_encode = []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 98, 98}
+	required_decode = required_raw
+
+	raw = []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode = Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode = Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+}
+
+func TestFlagCounting(t *testing.T) {
+	config := Config{
+		SpecialByte: 0x61,
+		Delimiter:   true,
+		Type:        Reduced,
+	}
+	required_message := "aabbbaabbabbabb"
+	required_raw := []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
+	required_encode := []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 98, 98, 97}
+	required_decode := required_raw
+
+	raw := []byte(required_message)
+	assert.Equal(t, raw, required_raw)
+	encode := Encode(raw, config)
+	assert.Equal(t, encode, required_encode)
+	assert.Equal(t, Verify(encode, config), nil)
+	decode := Decode(encode, config)
+	assert.Equal(t, decode, required_decode)
+
+	assert.Equal(t, FlagCount(encode, config), 8)
 }
