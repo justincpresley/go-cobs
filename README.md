@@ -75,11 +75,10 @@ func main() {
 
 It would be an interesting to find what the optimal amount of flags is to provide the best integrity checking for given data.
 
-The API is subject to change based on future additions.
+The API is subject to change based on future additions. Speaking of additions, I am more than happy to review pull requests if anyone wants to contribute.
 
 Currently, I am planning for the following to be released in the future:
 
- - Release 1.0.0 of this library.
- - Create in-depth testing.
+ - Create in-depth testing. This needs major improvement.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
- - Implement `COBS/ZPE` and/or `COBS/ZRE`.
+ - Types `COBS/ZPE` and/or `COBS/ZRE`.
