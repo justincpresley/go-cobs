@@ -47,7 +47,6 @@ func nativeEncode(src []byte, config Config) (dst []byte) {
 
 func nativeDecode(src []byte, config Config) (dst []byte) {
 	loopLen := len(src)
-	// the cap needs optimization
 	dst = make([]byte, 0, loopLen-1-(loopLen/254))
 	if config.Delimiter {
 		loopLen--

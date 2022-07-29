@@ -34,7 +34,7 @@ func reducedEncode(src []byte, config Config) (dst []byte) {
 			code = 0x01
 		}
 	}
-	if int(src[srcLen-1]) > (len(dst)-codePtr) && src[srcLen-1] != config.SpecialByte {
+	if srcLen != 0 && int(src[srcLen-1]) > (len(dst)-codePtr) && src[srcLen-1] != config.SpecialByte {
 		code = src[srcLen-1]
 		dst = dst[:len(dst)-1]
 		dst[codePtr] = code
@@ -53,7 +53,6 @@ func reducedEncode(src []byte, config Config) (dst []byte) {
 
 func reducedDecode(src []byte, config Config) (dst []byte) {
 	loopLen := len(src)
-	// the cap needs optimization
 	dst = make([]byte, 0, loopLen-1-(loopLen/254))
 	if config.Delimiter {
 		loopLen--
@@ -81,7 +80,11 @@ func reducedDecode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, config.SpecialByte)
 		}
 	}
-	return append(dst[:len(dst)-1], code)
+	dst = dst[:len(dst)-1]
+	if jumpLen != int(code) {
+		dst = append(dst, code)
+	}
+	return dst
 }
 
 func reducedVerify(src []byte, config Config) (err error) {
