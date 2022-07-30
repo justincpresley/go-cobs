@@ -117,15 +117,6 @@ func MaxOverhead(dLen int, config Config) (eLen int) {
 // BestCase calculates the best case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func BestCase(dLen int, config Config) (eLen int) {
-	eLen = dLen + 1
-	if config.Delimiter {
-		eLen++
-	}
-	if config.Type == Reduced {
-		eLen--
-	}
-	return eLen
-
 	switch config.Type {
 	case Native:
 		eLen = dLen + 1
