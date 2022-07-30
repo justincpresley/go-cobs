@@ -96,11 +96,11 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 		}
 		if code > 0xE0 {
 			jumpLen = int(code & 0x1F)
-		}else{
+		} else {
 			jumpLen = int(code)
 		}
 		ptr++
-		for i:=1; i<jumpLen; i++ {
+		for i := 1; i < jumpLen; i++ {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
@@ -139,13 +139,13 @@ func pairelimVerify(src []byte, config Config) (err error) {
 			if b == 0x00 {
 				if config.SpecialByte > 0xE0 {
 					nextFlag = int(config.SpecialByte & 0x1F)
-				}else{
+				} else {
 					nextFlag = int(config.SpecialByte)
 				}
 			} else {
 				if b > 0xE0 {
 					nextFlag = int(b & 0x1F)
-				}else{
+				} else {
 					nextFlag = int(b)
 				}
 			}
@@ -170,13 +170,13 @@ func pairelimFLagCount(src []byte, config Config) (flags int) {
 		if src[ptr] == 0x00 {
 			if config.SpecialByte > 0xE0 {
 				ptr += int(config.SpecialByte & 0x1F)
-			}else{
+			} else {
 				ptr += int(config.SpecialByte)
 			}
 		} else {
 			if src[ptr] > 0xE0 {
 				ptr += int(src[ptr] & 0x1F)
-			}else{
+			} else {
 				ptr += int(src[ptr])
 			}
 		}
