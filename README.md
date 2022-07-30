@@ -83,4 +83,5 @@ Currently, I am planning for the following to be released in the future:
  - Create custom errors for this library.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
  - Types `COBS/RE` (RunElimination) aka `COBS/ZRE` and `COBS/PAR` (PairAndRun).
- - Find a good way to specify what/how many bytes cover what in the config (30 bytes for Pairs, etc)
+ - Find a good way to specify what/how many bytes cover what in the config (30 bytes for Pairs, etc).
+ - Reduce overhead by 1 for all types if data limit (i.e. 255 for Native) occurs at end of slice.
