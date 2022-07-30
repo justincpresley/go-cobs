@@ -80,5 +80,7 @@ The API is subject to change based on future additions. Speaking of additions, I
 Currently, I am planning for the following to be released in the future:
 
  - Create in-depth testing. This needs major improvement.
+ - Create custom errors for this library.
  - A function that combines `Decode()` and `Verify()` in one function to eliminate the need to loop through the data twice.
- - Types `COBS/ZPE` and/or `COBS/ZRE`.
+ - Types `COBS/RE` (RunElimination) aka `COBS/ZRE` and `COBS/PAR` (PairAndRun).
+ - Find a good way to specify what/how many bytes cover what in the config (30 bytes for Pairs, etc)

@@ -1,5 +1,9 @@
 package cobs
 
+import (
+	"errors"
+)
+
 func pairelimEncode(src []byte, config Config) (dst []byte) {
 	srcLen := len(src)
 	dst = make([]byte, 1, srcLen+1)
@@ -112,7 +116,46 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 }
 
 func pairelimVerify(src []byte, config Config) (err error) {
-	return
+	nextFlag := 0
+	loopLen := len(src)
+	if config.Delimiter {
+		if loopLen < 2 {
+			return errors.New("COBS[PairElimination]: Encoded slice is too short to be valid.")
+		}
+		if src[loopLen-1] != config.SpecialByte {
+			return errors.New("COBS[PairElimination]: Encoded slice's delimiter is not special byte.")
+		}
+		loopLen--
+	} else {
+		if loopLen < 1 {
+			return errors.New("COBS[PairElimination]: Encoded slice is too short to be valid.")
+		}
+	}
+	for _, b := range src[:loopLen] {
+		if b == config.SpecialByte {
+			return errors.New("COBS[PairElimination]: Encoded slice's byte (not the delimter) is special byte.")
+		}
+		if nextFlag == 0 {
+			if b == 0x00 {
+				if config.SpecialByte > 0xE0 {
+					nextFlag = int(config.SpecialByte & 0x1F)
+				}else{
+					nextFlag = int(config.SpecialByte)
+				}
+			} else {
+				if b > 0xE0 {
+					nextFlag = int(b & 0x1F)
+				}else{
+					nextFlag = int(b)
+				}
+			}
+		}
+		nextFlag--
+	}
+	if nextFlag != 0 {
+		return errors.New("COBS[PairElimination]: Encoded slice's flags do not lead to end.")
+	}
+	return nil
 }
 
 func pairelimFLagCount(src []byte, config Config) (flags int) {

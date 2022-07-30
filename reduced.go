@@ -105,7 +105,7 @@ func reducedVerify(src []byte, config Config) (err error) {
 	}
 	for _, b := range src[:loopLen] {
 		if b == config.SpecialByte {
-			return errors.New("COBS[Native]: Encoded slice's byte (not the delimter) is special byte.")
+			return errors.New("COBS[Reduced]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0 {
@@ -117,7 +117,7 @@ func reducedVerify(src []byte, config Config) (err error) {
 		nextFlag--
 	}
 	if nextFlag < 0 {
-		return errors.New("COBS[Native]: Encoded slice's flags do not lead to end.")
+		return errors.New("COBS[Reduced]: Encoded slice's flags do not lead to end.")
 	}
 	return nil
 }
