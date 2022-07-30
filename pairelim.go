@@ -116,5 +116,28 @@ func pairelimVerify(src []byte, config Config) (err error) {
 }
 
 func pairelimFLagCount(src []byte, config Config) (flags int) {
-	return
+	numFlags := 0
+	ptr := 0
+	loopLen := len(src)
+	if config.Delimiter {
+		numFlags++
+		loopLen--
+	}
+	for ptr < loopLen {
+		if src[ptr] == 0x00 {
+			if config.SpecialByte > 0xE0 {
+				ptr += int(config.SpecialByte & 0x1F)
+			}else{
+				ptr += int(config.SpecialByte)
+			}
+		} else {
+			if src[ptr] > 0xE0 {
+				ptr += int(src[ptr] & 0x1F)
+			}else{
+				ptr += int(src[ptr])
+			}
+		}
+		numFlags++
+	}
+	return numFlags
 }
