@@ -13,7 +13,7 @@ Comparatively, this library offers combined functionality not found within any o
  - **Be able to choose whether the Delimiter (Special byte) is added.** Libraries tend to only given one option.
  - **Be able to choose what the Special Byte is.** Every other library uses the NULL (0x00) byte only.
  - **Be able to use COBS as a Layer of Integrity.** By ensuring that the special byte does not occur (expect with a delimiter) and by ensuring that the flags lead to the end of the data, COBS can provide a small layer of integrity.
- - **Be able to use COBS/R (Reduced overhead).** This method is created and described [here](https://github.com/cmcqueen/cobs-c). Note by reducing, the flag-based check method for integrity is not applicable.
+ - **Be able to use ALL (some are WIP) COBS extensions.** Please check the documentation to learn more.
  - **Additional API Commands.** Not only is there functions to calculate the worst/best case for COBS, but there is also flag-related functions.
 
 ## Documentation
