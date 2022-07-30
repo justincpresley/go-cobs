@@ -1,8 +1,9 @@
 package cobs
 
 import (
-	"testing"
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNativeBasicFeatures(t *testing.T) {
@@ -143,4 +144,18 @@ func TestFlagCounting(t *testing.T) {
 	assert.Equal(t, decode, required_decode)
 
 	assert.Equal(t, FlagCount(encode, config), 8)
+}
+
+func TestNewStuff(t *testing.T) {
+	config := Config{
+		SpecialByte: 0x00,
+		Delimiter:   true,
+		Type:        PairElimination,
+	}
+	raw := []byte{0x00, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x00,0x00}
+	encode := Encode(raw, config)
+	fmt.Println(raw)
+	fmt.Println(encode)
+	decode := Decode(encode, config)
+	fmt.Println(decode)
 }

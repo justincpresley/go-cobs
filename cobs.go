@@ -4,10 +4,11 @@ type Type uint8
 
 // The Following are a list of COBS-Types. Each has differents pros/cons listed below.
 // Native supports all verification and is The default protocol.
-// Reduced potenially reduces overhead by 1 byte but makes flag-based verification inapplicable.
+// Reduced potenially reduces overhead by 1 byte but massively decreases flag-based verification coverage.
 const (
-	Native  Type = 0
-	Reduced Type = 1
+	Native          Type = 0
+	Reduced         Type = 1
+	PairElimination Type = 2
 )
 
 // Config is a struct that holds configuration variables on how
@@ -24,11 +25,13 @@ type Config struct {
 func Encode(src []byte, config Config) (dst []byte) {
 	switch config.Type {
 	case Native:
-	  return nativeEncode(src, config)
+		return nativeEncode(src, config)
 	case Reduced:
-	  return reducedEncode(src, config)
+		return reducedEncode(src, config)
+	case PairElimination:
+		return pairelimEncode(src, config)
 	default:
-	  return
+		return
 	}
 }
 
@@ -37,11 +40,13 @@ func Encode(src []byte, config Config) (dst []byte) {
 func Decode(src []byte, config Config) (dst []byte) {
 	switch config.Type {
 	case Native:
-	  return nativeDecode(src, config)
+		return nativeDecode(src, config)
 	case Reduced:
-	  return reducedDecode(src, config)
+		return reducedDecode(src, config)
+	case PairElimination:
+		return pairelimDecode(src, config)
 	default:
-	  return
+		return
 	}
 }
 
@@ -51,11 +56,13 @@ func Decode(src []byte, config Config) (dst []byte) {
 func Verify(src []byte, config Config) (err error) {
 	switch config.Type {
 	case Native:
-	  return nativeVerify(src, config)
+		return nativeVerify(src, config)
 	case Reduced:
-	  return reducedVerify(src, config)
+		return reducedVerify(src, config)
+	case PairElimination:
+		return pairelimVerify(src, config)
 	default:
-	  return
+		return
 	}
 }
 
@@ -64,11 +71,13 @@ func Verify(src []byte, config Config) (err error) {
 func FlagCount(src []byte, config Config) (flags int) {
 	switch config.Type {
 	case Native:
-	  return nativeFlagCount(src, config)
+		return nativeFlagCount(src, config)
 	case Reduced:
-	  return reducedFlagCount(src, config)
+		return reducedFlagCount(src, config)
+	case PairElimination:
+		return pairelimFLagCount(src, config)
 	default:
-	  return
+		return
 	}
 }
 
