@@ -1,8 +1,8 @@
 package cobs
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNativeBasicFeatures(t *testing.T) {

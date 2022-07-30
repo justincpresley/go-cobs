@@ -38,7 +38,7 @@ func reducedEncode(src []byte, config Config) (dst []byte) {
 		code = src[srcLen-1]
 		dst = dst[:len(dst)-1]
 		dst[codePtr] = code
-	}else{
+	} else {
 		if code == config.SpecialByte {
 			dst[codePtr] = 0x00
 		} else {
@@ -88,6 +88,7 @@ func reducedDecode(src []byte, config Config) (dst []byte) {
 }
 
 func reducedVerify(src []byte, config Config) (err error) {
+	nextFlag := 0
 	loopLen := len(src)
 	if config.Delimiter {
 		if loopLen < 2 {
@@ -104,8 +105,19 @@ func reducedVerify(src []byte, config Config) (err error) {
 	}
 	for _, b := range src[:loopLen] {
 		if b == config.SpecialByte {
-			return errors.New("COBS[Native]: Encoded slice's byte (not the delimter) is special byte.")
+			return errors.New("COBS[Reduced]: Encoded slice's byte (not the delimter) is special byte.")
 		}
+		if nextFlag == 0 {
+			if b == 0 {
+				nextFlag = int(config.SpecialByte)
+			} else {
+				nextFlag = int(b)
+			}
+		}
+		nextFlag--
+	}
+	if nextFlag < 0 {
+		return errors.New("COBS[Reduced]: Encoded slice's flags do not lead to end.")
 	}
 	return nil
 }
