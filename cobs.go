@@ -5,6 +5,7 @@ type Type uint8
 // The Following are a list of COBS-Types. Each has differents pros/cons listed below.
 // Native supports all verification and is The default protocol.
 // Reduced potenially reduces overhead by 1 byte but massively decreases flag-based verification coverage.
+// PairElimination trades rare theoretical worstcase for a common reduction in overhead by "pairing" specials.
 const (
 	Native          Type = 0
 	Reduced         Type = 1
@@ -84,11 +85,28 @@ func FlagCount(src []byte, config Config) (flags int) {
 // WorseCase calculates the worse case for the COBS overhead when given
 // a raw length and an appropiate configuration.
 func WorseCase(dLen int, config Config) (eLen int) {
-	eLen = dLen + 1 + (dLen / 254)
-	if config.Delimiter {
-		eLen++
+	switch config.Type {
+	case Native:
+		eLen = dLen + 1 + (dLen / 254)
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	case Reduced:
+		eLen = dLen + 1 + (dLen / 254)
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	case PairElimination:
+		eLen = dLen + 1 + (dLen / 223)
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	default:
+		return
 	}
-	return eLen
 }
 
 // MaxOverhead is an alias for WorseCase.
@@ -107,6 +125,29 @@ func BestCase(dLen int, config Config) (eLen int) {
 		eLen--
 	}
 	return eLen
+
+	switch config.Type {
+	case Native:
+		eLen = dLen + 1
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	case Reduced:
+		eLen = dLen
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	case PairElimination:
+		eLen = (dLen / 2) + 1
+		if config.Delimiter {
+			eLen++
+		}
+		return eLen
+	default:
+		return
+	}
 }
 
 // MinOverhead is an alias for BestCase.

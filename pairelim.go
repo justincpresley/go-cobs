@@ -90,9 +90,10 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 		} else {
 			code = src[ptr]
 		}
-		jumpLen = int(code)
 		if code > 0xE0 {
 			jumpLen = int(code & 0x1F)
+		}else{
+			jumpLen = int(code)
 		}
 		ptr++
 		for i:=1; i<jumpLen; i++ {
