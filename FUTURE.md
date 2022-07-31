@@ -6,7 +6,6 @@
  - Include charts of each type representing the overhead to help guide users of this library.
 
 ## Efficiency
- - Allow `EndingSave` to be used for pair flags in `PairElimination`.
  - Introduce multi-variable assignment throughout.
  - Refactor for performance if possible.
 
