@@ -11,6 +11,7 @@ func TestNativeBasicFeatures(t *testing.T) {
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Native,
+		EndingSave:  false,
 	}
 	required_message := "aaaaaaaaaaa"
 	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -30,6 +31,7 @@ func TestNativeBasicFeatures(t *testing.T) {
 		SpecialByte: 0x00,
 		Delimiter:   false,
 		Type:        Native,
+		EndingSave:  false,
 	}
 	required_message = "aaaaaaaaaaa"
 	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -49,6 +51,7 @@ func TestNativeBasicFeatures(t *testing.T) {
 		SpecialByte: 0x61,
 		Delimiter:   false,
 		Type:        Native,
+		EndingSave:  false,
 	}
 	required_message = "aabbbaabbabbabb"
 	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
@@ -70,6 +73,7 @@ func TestReducedBasicFeatures(t *testing.T) {
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Reduced,
+		EndingSave:  false,
 	}
 	required_message := "aaaaaaaaaaa"
 	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -89,6 +93,7 @@ func TestReducedBasicFeatures(t *testing.T) {
 		SpecialByte: 0x00,
 		Delimiter:   false,
 		Type:        Reduced,
+		EndingSave:  false,
 	}
 	required_message = "aaaaaaaaaaa"
 	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -108,6 +113,7 @@ func TestReducedBasicFeatures(t *testing.T) {
 		SpecialByte: 0x61,
 		Delimiter:   false,
 		Type:        Reduced,
+		EndingSave:  false,
 	}
 	required_message = "aabbbaabbabbabb"
 	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
@@ -128,6 +134,7 @@ func TestFlagCounting(t *testing.T) {
 		SpecialByte: 0x61,
 		Delimiter:   true,
 		Type:        Reduced,
+		EndingSave:  false,
 	}
 	required_message := "aabbbaabbabbabb"
 	required_raw := []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}

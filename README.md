@@ -48,6 +48,7 @@ func main() {
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Reduced,
+    EndingSave:  true,
 	}
 
 	message := "AAAAAAAAAAAAAAAAA"
