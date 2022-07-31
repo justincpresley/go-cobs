@@ -19,6 +19,7 @@ type Config struct {
 	SpecialByte byte
 	Delimiter   bool
 	Type        Type
+	EndingSave  bool
 }
 
 // Encode takes raw data and a configuration and produces the COBS-encoded

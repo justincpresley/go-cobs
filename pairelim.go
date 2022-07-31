@@ -5,15 +5,16 @@ import (
 )
 
 func pairelimEncode(src []byte, config Config) (dst []byte) {
-	srcLen := len(src)
-	dst = make([]byte, 1, srcLen+1)
+	loopLen := len(src)
+	dst = make([]byte, 1, loopLen+1)
 	codePtr := 0
 	code := byte(0x01)
 	pairable := false
-	for _, b := range src {
+	ptr := 0
+	for ptr < loopLen {
 		if pairable {
 			pairable = false
-			if b == config.SpecialByte {
+			if src[ptr] == config.SpecialByte {
 				code |= 0xE0
 				if code == config.SpecialByte {
 					dst[codePtr] = 0x00
@@ -23,6 +24,7 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 				codePtr = len(dst)
 				dst = append(dst, 0)
 				code = 0x01
+				ptr++
 				continue
 			}
 			if code == config.SpecialByte {
@@ -32,14 +34,16 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 			}
 			codePtr = len(dst)
 			dst = append(dst, 0)
-			dst = append(dst, b)
+			dst = append(dst, src[ptr])
 			code = 0x01
 			code++
+			ptr++
 			continue
 		}
-		if b == config.SpecialByte {
+		if src[ptr] == config.SpecialByte {
 			if code <= 0x1F {
 				pairable = true
+				ptr++
 				continue
 			}
 			if code == config.SpecialByte {
@@ -50,11 +54,12 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 			codePtr = len(dst)
 			dst = append(dst, 0)
 			code = 0x01
+			ptr++
 			continue
 		}
-		dst = append(dst, b)
+		dst = append(dst, src[ptr])
 		code++
-		if code == 0xE0 {
+		if code == 0xE0 && (!config.EndingSave || ptr != loopLen-1) {
 			if code == config.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
@@ -64,6 +69,7 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, 0)
 			code = 0x01
 		}
+		ptr++
 	}
 	if pairable {
 		code |= 0xE0
@@ -104,11 +110,10 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		switch {
-		case code > 0xE0:
+		if code > 0xE0 {
 			dst = append(dst, config.SpecialByte)
 			dst = append(dst, config.SpecialByte)
-		case code < 0xE0:
+		} else if code < 0xE0 || (config.EndingSave && ptr == loopLen) {
 			dst = append(dst, config.SpecialByte)
 		}
 	}

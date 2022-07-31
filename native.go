@@ -5,12 +5,13 @@ import (
 )
 
 func nativeEncode(src []byte, config Config) (dst []byte) {
-	srcLen := len(src)
-	dst = make([]byte, 1, srcLen+1)
+	loopLen := len(src)
+	dst = make([]byte, 1, loopLen+1)
 	codePtr := 0
 	code := byte(0x01)
-	for _, b := range src {
-		if b == config.SpecialByte {
+	ptr := 0
+	for ptr < loopLen {
+		if src[ptr] == config.SpecialByte {
 			if code == config.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
@@ -19,11 +20,12 @@ func nativeEncode(src []byte, config Config) (dst []byte) {
 			codePtr = len(dst)
 			dst = append(dst, 0)
 			code = 0x01
+			ptr++
 			continue
 		}
-		dst = append(dst, b)
+		dst = append(dst, src[ptr])
 		code++
-		if code == 0xFF {
+		if code == 0xFF && (!config.EndingSave || ptr != loopLen-1) {
 			if code == config.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
@@ -33,6 +35,7 @@ func nativeEncode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, 0)
 			code = 0x01
 		}
+		ptr++
 	}
 	if code == config.SpecialByte {
 		dst[codePtr] = 0x00
@@ -64,7 +67,7 @@ func nativeDecode(src []byte, config Config) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		if code < 0xFF {
+		if code < 0xFF || (config.EndingSave && ptr == loopLen) {
 			dst = append(dst, config.SpecialByte)
 		}
 	}

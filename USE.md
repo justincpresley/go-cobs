@@ -2,7 +2,7 @@
 
 ## Configuration
 
-The following are variables of the the `Config` structure.
+The following are variables of the `Config` structure. All variables are applicable to all types.
 
 * **SpecialByte**:
   * Description: The particular byte value to be "encoded away".
@@ -13,6 +13,9 @@ The following are variables of the the `Config` structure.
 * **Type**:
   * Description: The Type of COBS that is used for all API functions.
   * Possible Values: Any `Type` value.
+* **EndingSave**:
+  * Description: Whether to save a byte when encountering "max" flag(s) occurring at the end of the slice.
+  * Possible Values: The two boolean values: `true` and `false`.
 
 ## Types
 

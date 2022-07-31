@@ -3,10 +3,10 @@
 ## Stableness
  - Create in-depth testing to ensure compliance and bug detection.
  - Create custom errors for this library.
- - Include charts of each type representing the overhead to help guide users of this library. 
+ - Include charts of each type representing the overhead to help guide users of this library.
 
 ## Efficiency
- - Reduce overhead by 1 for all types if data limit (i.e. 255 for Native) occurs at end of slice.
+ - Allow `EndingSave` to be used for pair flags in `PairElimination`.
  - Introduce multi-variable assignment throughout.
  - Refactor for performance if possible.
 
