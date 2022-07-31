@@ -26,11 +26,11 @@ The following are the types (extensions) that are/will be included. You can thin
   * Description: Saves a byte by replacing the last flag with the last character if is appropriate!
   * Pros: Potentially saves a byte of overhead. Encoding possibly generates no overhead.
   * Cons: A massive reduction in coverage from flag-based verification.
-* [-] **Reversed** ``(RCOBS)``:
+* [ ] **Reversed** ``(RCOBS)``:
   * Description: Place the flag at the end of the chunk rather than before effectively reversing the process.
   * Pros: Allows encoding with zero lookahead.
   * Cons: Decoding has to be done in reverse. Streaming decode is not feasible.
-* [-] **Duversed** ``(RCOBS/R)``:
+* [ ] **Duversed** ``(RCOBS/R)``:
   * Description: Combined `Reduced` and `Reversed`. Created by me!
   * Pros: Pros from both types.
   * Cons: Cons from both types.
@@ -38,11 +38,11 @@ The following are the types (extensions) that are/will be included. You can thin
   * Description: Incorporate flags to represent a "pair" of special bytes.
   * Pros: A common reduction in overhead. Best case can be almost half of the size. Good for embedded systems.
   * Cons: An increase in theoretical worse case (maximum overhead) than `Native`.
-* [-] **RunElimination** ``(COBS/RE)``:
+* [ ] **RunElimination** ``(COBS/RE)``:
   * Description: Incorporate flags to represent a "run" of special bytes.
   * Pros: A rare but massive reduction in overhead. Good for embedded systems.
   * Cons: An increase in theoretical worse case (maximum overhead) than `Native`.
-* [-] **PairAndRun** ``(COBS/PAR)``:
+* [ ] **PairAndRun** ``(COBS/PAR)``:
   * Description: Combined `PairElimination` and `RunElimination`.
   * Pros: Achieving an optimal balance. Pros of both types.
   * Cons: While the con existing in both types is present, it possibly is reduced (needs testing).
