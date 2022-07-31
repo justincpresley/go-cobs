@@ -18,6 +18,8 @@ The following are variables of the the `Config` structure.
 
 The following are the types (extensions) that are/will be included. You can think of types as different versions COBS. Each has their own advantages, disadvantages, and use case.
 
+Individual Types:
+
 * [X] **Native** ``(COBS)``:
   * Description: This is the natural and default algorithm that was first presented.
   * Pros: Relatively stable overhead. The easiest to implement and possibly the most performant.
@@ -30,10 +32,6 @@ The following are the types (extensions) that are/will be included. You can thin
   * Description: Place the flag at the end of the chunk rather than before effectively reversing the process.
   * Pros: Allows encoding with zero lookahead.
   * Cons: Decoding has to be done in reverse. Streaming decode is not feasible.
-* [ ] **Duversed** ``(RCOBS/R)``:
-  * Description: Combined `Reduced` and `Reversed`. Created by me!
-  * Pros: Pros from both types.
-  * Cons: Cons from both types.
 * [X] **PairElimination** ``(COBS/PE)``:
   * Description: Incorporate flags to represent a "pair" of special bytes.
   * Pros: A common reduction in overhead. Best case can be almost half of the size. Good for embedded systems.
@@ -42,6 +40,13 @@ The following are the types (extensions) that are/will be included. You can thin
   * Description: Incorporate flags to represent a "run" of special bytes.
   * Pros: A rare but massive reduction in overhead. Good for embedded systems.
   * Cons: An increase in theoretical worse case (maximum overhead) than `Native`.
+
+Combined Types:
+
+* [ ] **Duversed** ``(RCOBS/R)``:
+  * Description: Combined `Reduced` and `Reversed`. Created by me!
+  * Pros: Pros from both types.
+  * Cons: Cons from both types.
 * [ ] **PairAndRun** ``(COBS/PAR)``:
   * Description: Combined `PairElimination` and `RunElimination`.
   * Pros: Achieving an optimal balance. Pros of both types.
