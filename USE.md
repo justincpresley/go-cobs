@@ -49,5 +49,5 @@ Combined Types:
   * Cons: Cons from both types.
 * [ ] **PairAndRun** ``(COBS/PAR)``:
   * Description: Combined `PairElimination` and `RunElimination`.
-  * Pros: Achieving an optimal balance. Pros of both types.
-  * Cons: While the con existing in both types is present, it possibly is reduced (needs testing).
+  * Pros: Objectively achieving an optimal balance. Pros of both types.
+  * Cons: Cons of both types.
