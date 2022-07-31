@@ -4,18 +4,26 @@
 
 The following are variables of the `Config` structure. All variables are applicable to all types.
 
-* **SpecialByte**:
+* [X] **SpecialByte**:
   * Description: The particular byte value to be "encoded away".
   * Possible Values: Any hex value such as `0x00`.
-* **Delimiter**:
+  * Suggested Default: No default.
+* [X] **Delimiter**:
   * Description: Whether to include a delimiter: the special byte value placed at the end of the encoded slice to mark the end.
   * Possible Values: The two boolean values: `true` and `false`.
-* **Type**:
+  * Suggested Default: No default.
+* [X] **Type**:
   * Description: The Type of COBS that is used for all API functions.
   * Possible Values: Any `Type` value.
-* **EndingSave**:
+  * Suggested Default: `Native`.
+* [X] **EndingSave**:
   * Description: Whether to save a byte when encountering "max" flag(s) occurring at the end of the slice.
   * Possible Values: The two boolean values: `true` and `false`.
+  * Suggested Default: `true`.
+* [ ] **Reverse**:
+  * Description: Place the flag at the end of the chunk rather than before effectively reversing the process. This allows encoding with no lookahead (making it easier to encode) but enforces decoding to be done in reverse killing the ability to stream decode.
+  * Possible Values: The two boolean values: `true` and `false`.
+  * Suggested Default: `false`.
 
 ## Types
 
@@ -31,10 +39,6 @@ Individual Types:
   * Description: Saves a byte by replacing the last flag with the last character if is appropriate!
   * Pros: Potentially saves a byte of overhead. Encoding possibly generates no overhead.
   * Cons: A massive reduction in coverage from flag-based verification.
-* [ ] **Reversed** ``(RCOBS)``:
-  * Description: Place the flag at the end of the chunk rather than before effectively reversing the process.
-  * Pros: Allows encoding with zero lookahead.
-  * Cons: Decoding has to be done in reverse. Streaming decode is not feasible.
 * [X] **PairElimination** ``(COBS/PE)``:
   * Description: Incorporate flags to represent a "pair" of special bytes.
   * Pros: A common reduction in overhead. Best case can be almost half of the size. Good for embedded systems.
@@ -46,10 +50,6 @@ Individual Types:
 
 Combined Types:
 
-* [ ] **Duversed** ``(RCOBS/R)``:
-  * Description: Combined `Reduced` and `Reversed`. Created by me!
-  * Pros: Pros from both types.
-  * Cons: Cons from both types.
 * [ ] **PairAndRun** ``(COBS/PAR)``:
   * Description: Combined `PairElimination` and `RunElimination`.
   * Pros: Objectively achieving an optimal balance. Pros of both types.
