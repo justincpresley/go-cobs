@@ -1,11 +1,13 @@
 package cobs
 
+import (
+	"errors"
+)
+
 type Type uint8
 
-// The Following are a list of COBS-Types. Each has differents pros/cons listed below.
-// Native supports all verification and is The default protocol.
-// Reduced potenially reduces overhead by 1 byte but massively decreases flag-based verification coverage.
-// PairElimination trades rare theoretical worstcase for a common reduction in overhead by "pairing" specials.
+// The Following are a list of COBS-Types. Each has differents pros/cons.
+// To learn more about types, see USE.md on the github repository.
 const (
 	Native          Type = 0
 	Reduced         Type = 1
@@ -14,12 +16,24 @@ const (
 
 // Config is a struct that holds configuration variables on how
 // this COBS library will function. It can be customized according
-// to the use case.
+// to the use case. To learn more about the config parameters and what they do,
+// see USE.md on the github repository.
 type Config struct {
 	SpecialByte byte
 	Delimiter   bool
 	Type        Type
 	EndingSave  bool
+	Reverse     bool
+}
+
+// Validate checks whether a configuration has parameters that work together.
+// This allows the library to regularize releases and incorporate paramaters that
+// may not be suitable for certain types.
+func (config Config) Validate() (err error) {
+	if config.Reverse {
+		return errors.New("No COBS Type can be Reversed ATM. WIP.")
+	}
+	return
 }
 
 // Encode takes raw data and a configuration and produces the COBS-encoded

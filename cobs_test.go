@@ -12,7 +12,10 @@ func TestNativeBasicFeatures(t *testing.T) {
 		Delimiter:   true,
 		Type:        Native,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message := "aaaaaaaaaaa"
 	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
 	required_encode := []byte{12, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 0}
@@ -32,7 +35,10 @@ func TestNativeBasicFeatures(t *testing.T) {
 		Delimiter:   false,
 		Type:        Native,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message = "aaaaaaaaaaa"
 	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
 	required_encode = []byte{12, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -52,7 +58,10 @@ func TestNativeBasicFeatures(t *testing.T) {
 		Delimiter:   false,
 		Type:        Native,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message = "aabbbaabbabbabb"
 	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
 	required_encode = []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 3, 98, 98}
@@ -74,7 +83,10 @@ func TestReducedBasicFeatures(t *testing.T) {
 		Delimiter:   true,
 		Type:        Reduced,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message := "aaaaaaaaaaa"
 	required_raw := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
 	required_encode := []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 0}
@@ -94,7 +106,10 @@ func TestReducedBasicFeatures(t *testing.T) {
 		Delimiter:   false,
 		Type:        Reduced,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message = "aaaaaaaaaaa"
 	required_raw = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
 	required_encode = []byte{97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97}
@@ -114,7 +129,10 @@ func TestReducedBasicFeatures(t *testing.T) {
 		Delimiter:   false,
 		Type:        Reduced,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message = "aabbbaabbabbabb"
 	required_raw = []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
 	required_encode = []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 98, 98}
@@ -135,7 +153,10 @@ func TestFlagCounting(t *testing.T) {
 		Delimiter:   true,
 		Type:        Reduced,
 		EndingSave:  false,
+		Reverse:     false,
 	}
+	assert.Equal(t, config.Validate(), nil)
+
 	required_message := "aabbbaabbabbabb"
 	required_raw := []byte{97, 97, 98, 98, 98, 97, 97, 98, 98, 97, 98, 98, 97, 98, 98}
 	required_encode := []byte{1, 1, 4, 98, 98, 98, 1, 3, 98, 98, 3, 98, 98, 98, 98, 97}

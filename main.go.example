@@ -7,11 +7,18 @@ import (
 )
 
 func main() {
+  var ok error
+
 	config := cobs.Config{
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Reduced,
 		EndingSave:  true,
+    Reverse:     false,
+	}
+  if ok = config.Validate(); ok != nil {
+		fmt.Println("Error:", ok)
+		return
 	}
 
 	message := "AAAAAAAAAAAAAAAAA"
@@ -24,7 +31,7 @@ func main() {
 	encoded := cobs.Encode(raw, config)
 	fmt.Println("Encoded:", encoded)
 
-	if ok := cobs.Verify(encoded, config); ok != nil {
+	if ok = cobs.Verify(encoded, config); ok != nil {
 		fmt.Println("Status: CORRUPTED")
 		fmt.Println("Error:", ok)
 		return

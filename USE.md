@@ -2,7 +2,7 @@
 
 ## Configuration
 
-The following are variables of the `Config` structure. All variables are applicable to all types.
+The following are variables of the `Config` structure. All variables are applicable to all types. If you are frightened by the options, feel free to use the suggested defaults or create an empty structure (which acts like a very simple implementation).
 
 * [X] **SpecialByte**:
   * Description: The particular byte value to be "encoded away".
@@ -21,7 +21,7 @@ The following are variables of the `Config` structure. All variables are applica
   * Possible Values: The two boolean values: `true` and `false`.
   * Suggested Default: `true`.
 * [ ] **Reverse**:
-  * Description: Place the flag at the end of the chunk rather than before effectively reversing the process. This allows encoding with no lookahead (making it easier to encode) but enforces decoding to be done in reverse killing the ability to stream decode.
+  * Description: Place the flag at the end of the chunk rather than before effectively reversing the process - `RCOBS`. This allows encoding with no lookahead (making it easier to encode) but enforces decoding to be done in reverse killing the ability to stream decode.
   * Possible Values: The two boolean values: `true` and `false`.
   * Suggested Default: `false`.
 
