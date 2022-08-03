@@ -44,16 +44,16 @@ import (
 )
 
 func main() {
-  var ok error
+	var ok error
 
 	config := cobs.Config{
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		Type:        Reduced,
 		EndingSave:  true,
-    Reverse:     false,
+		Reverse:     false,
 	}
-  if ok = config.Validate(); ok != nil {
+  	if ok = config.Validate(); ok != nil {
 		fmt.Println("Error:", ok)
 		return
 	}
