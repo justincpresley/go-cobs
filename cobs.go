@@ -46,20 +46,20 @@ func NewEncoder(c Config) (Encoder, error) {
 		if !c.Reverse {
 			return enc.NativeEncoder{
 				SpecialByte: c.SpecialByte,
-				Delimiter: c.Delimiter,
-				EndingSave: c.EndingSave}, nil
+				Delimiter:   c.Delimiter,
+				EndingSave:  c.EndingSave}, nil
 		} else {
 			return enc.R_NativeEncoder{
 				SpecialByte: c.SpecialByte,
-				Delimiter: c.Delimiter,
-				EndingSave: c.EndingSave}, nil
+				Delimiter:   c.Delimiter,
+				EndingSave:  c.EndingSave}, nil
 		}
 	case Reduced:
 		if !c.Reverse {
 			return enc.ReducedEncoder{
 				SpecialByte: c.SpecialByte,
-				Delimiter: c.Delimiter,
-				EndingSave: c.EndingSave}, nil
+				Delimiter:   c.Delimiter,
+				EndingSave:  c.EndingSave}, nil
 		} else {
 			return nil, errors.New("Reverse not avaliable for Reduced yet.")
 		}
@@ -67,8 +67,8 @@ func NewEncoder(c Config) (Encoder, error) {
 		if !c.Reverse {
 			return enc.PairelimEncoder{
 				SpecialByte: c.SpecialByte,
-				Delimiter: c.Delimiter,
-				EndingSave: c.EndingSave}, nil
+				Delimiter:   c.Delimiter,
+				EndingSave:  c.EndingSave}, nil
 		} else {
 			return nil, errors.New("Reverse not avaliable for PairElimination yet.")
 		}
