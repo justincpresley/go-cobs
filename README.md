@@ -45,14 +45,14 @@ import (
 
 func main() {
 	config := cobs.Config{
-    Type:        Reduced,
-    Reverse:     false,
+		Type:        Reduced,
+		Reverse:     false,
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		EndingSave:  true,
 	}
-  encoder, ok := cobs.NewEncoder(config)
-  if ok != nil {
+	encoder, ok := cobs.NewEncoder(config)
+	if ok != nil {
 		fmt.Println("Error:", ok)
 		return
 	}
