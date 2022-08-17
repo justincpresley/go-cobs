@@ -44,16 +44,15 @@ import (
 )
 
 func main() {
-	var ok error
-
 	config := cobs.Config{
+    Type:        Reduced,
+    Reverse:     false,
 		SpecialByte: 0x00,
 		Delimiter:   true,
-		Type:        Reduced,
 		EndingSave:  true,
-		Reverse:     false,
 	}
-  	if ok = config.Validate(); ok != nil {
+  encoder, ok := cobs.NewEncoder(config)
+  if ok != nil {
 		fmt.Println("Error:", ok)
 		return
 	}
@@ -65,17 +64,17 @@ func main() {
 	fmt.Println("Message:", message)
 	fmt.Println("Message Bytes:", raw)
 
-	encoded := cobs.Encode(raw, config)
+	encoded := encoder.Encode(raw)
 	fmt.Println("Encoded:", encoded)
 
-	if ok = cobs.Verify(encoded, config); ok != nil {
+	if ok = encoder.Verify(encoded); ok != nil {
 		fmt.Println("Status: CORRUPTED")
 		fmt.Println("Error:", ok)
 		return
 	}
 	fmt.Println("Status: VALID")
 
-	decoded := cobs.Decode(encoded, config)
+	decoded := encoder.Decode(encoded)
 	fmt.Println("Decoded:", decoded)
 	fmt.Println("Message:", string(decoded))
 }

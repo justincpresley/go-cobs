@@ -1,10 +1,16 @@
-package cobs
+package encoders
 
 import (
 	"errors"
 )
 
-func pairelimEncode(src []byte, config Config) (dst []byte) {
+type PairelimEncoder struct {
+	SpecialByte byte
+	Delimiter   bool
+	EndingSave  bool
+}
+
+func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 	loopLen := len(src)
 	dst = make([]byte, 1, loopLen+1)
 	codePtr := 0
@@ -14,9 +20,9 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 	for ptr < loopLen {
 		if pairable {
 			pairable = false
-			if src[ptr] == config.SpecialByte {
+			if src[ptr] == enc.SpecialByte {
 				code |= 0xE0
-				if code == config.SpecialByte {
+				if code == enc.SpecialByte {
 					dst[codePtr] = 0x00
 				} else {
 					dst[codePtr] = code
@@ -27,7 +33,7 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 				ptr++
 				continue
 			}
-			if code == config.SpecialByte {
+			if code == enc.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -40,13 +46,13 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 			ptr++
 			continue
 		}
-		if src[ptr] == config.SpecialByte {
+		if src[ptr] == enc.SpecialByte {
 			if code <= 0x1F {
 				pairable = true
 				ptr++
 				continue
 			}
-			if code == config.SpecialByte {
+			if code == enc.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -59,8 +65,8 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 		}
 		dst = append(dst, src[ptr])
 		code++
-		if code == 0xE0 && (!config.EndingSave || ptr != loopLen-1) {
-			if code == config.SpecialByte {
+		if code == 0xE0 && (!enc.EndingSave || ptr != loopLen-1) {
+			if code == enc.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -74,21 +80,21 @@ func pairelimEncode(src []byte, config Config) (dst []byte) {
 	if pairable {
 		code |= 0xE0
 	}
-	if code == config.SpecialByte {
+	if code == enc.SpecialByte {
 		dst[codePtr] = 0x00
 	} else {
 		dst[codePtr] = code
 	}
-	if config.Delimiter {
-		dst = append(dst, config.SpecialByte)
+	if enc.Delimiter {
+		dst = append(dst, enc.SpecialByte)
 	}
 	return dst
 }
 
-func pairelimDecode(src []byte, config Config) (dst []byte) {
+func (enc PairelimEncoder) Decode(src []byte) (dst []byte) {
 	loopLen := len(src)
 	dst = make([]byte, 0, loopLen-1-(loopLen/254))
-	if config.Delimiter {
+	if enc.Delimiter {
 		loopLen--
 	}
 	ptr := 0
@@ -96,7 +102,7 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 	code := byte(0x00)
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			code = config.SpecialByte
+			code = enc.SpecialByte
 		} else {
 			code = src[ptr]
 		}
@@ -111,23 +117,23 @@ func pairelimDecode(src []byte, config Config) (dst []byte) {
 			ptr++
 		}
 		if code > 0xE0 {
-			dst = append(dst, config.SpecialByte)
-			dst = append(dst, config.SpecialByte)
-		} else if code < 0xE0 || (config.EndingSave && ptr == loopLen) {
-			dst = append(dst, config.SpecialByte)
+			dst = append(dst, enc.SpecialByte)
+			dst = append(dst, enc.SpecialByte)
+		} else if code < 0xE0 || (enc.EndingSave && ptr == loopLen) {
+			dst = append(dst, enc.SpecialByte)
 		}
 	}
 	return dst[:len(dst)-1]
 }
 
-func pairelimVerify(src []byte, config Config) (err error) {
+func (enc PairelimEncoder) Verify(src []byte) (err error) {
 	nextFlag := 0
 	loopLen := len(src)
-	if config.Delimiter {
+	if enc.Delimiter {
 		if loopLen < 2 {
 			return errors.New("COBS[PairElimination]: Encoded slice is too short to be valid.")
 		}
-		if src[loopLen-1] != config.SpecialByte {
+		if src[loopLen-1] != enc.SpecialByte {
 			return errors.New("COBS[PairElimination]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
@@ -137,15 +143,15 @@ func pairelimVerify(src []byte, config Config) (err error) {
 		}
 	}
 	for _, b := range src[:loopLen] {
-		if b == config.SpecialByte {
+		if b == enc.SpecialByte {
 			return errors.New("COBS[PairElimination]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0x00 {
-				if config.SpecialByte > 0xE0 {
-					nextFlag = int(config.SpecialByte & 0x1F)
+				if enc.SpecialByte > 0xE0 {
+					nextFlag = int(enc.SpecialByte & 0x1F)
 				} else {
-					nextFlag = int(config.SpecialByte)
+					nextFlag = int(enc.SpecialByte)
 				}
 			} else {
 				if b > 0xE0 {
@@ -163,20 +169,20 @@ func pairelimVerify(src []byte, config Config) (err error) {
 	return nil
 }
 
-func pairelimFLagCount(src []byte, config Config) (flags int) {
+func (enc PairelimEncoder) FlagCount(src []byte) (flags int) {
 	numFlags := 0
 	ptr := 0
 	loopLen := len(src)
-	if config.Delimiter {
+	if enc.Delimiter {
 		numFlags++
 		loopLen--
 	}
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			if config.SpecialByte > 0xE0 {
-				ptr += int(config.SpecialByte & 0x1F)
+			if enc.SpecialByte > 0xE0 {
+				ptr += int(enc.SpecialByte & 0x1F)
 			} else {
-				ptr += int(config.SpecialByte)
+				ptr += int(enc.SpecialByte)
 			}
 		} else {
 			if src[ptr] > 0xE0 {
@@ -188,4 +194,28 @@ func pairelimFLagCount(src []byte, config Config) (flags int) {
 		numFlags++
 	}
 	return numFlags
+}
+
+func (enc PairelimEncoder) WorseCase(dLen int) (eLen int) {
+	eLen = dLen + 1 + (dLen / 223)
+	if enc.Delimiter {
+		eLen++
+	}
+	return eLen
+}
+
+func (enc PairelimEncoder) MaxOverhead(dLen int) (eLen int) {
+	return enc.WorseCase(dLen)
+}
+
+func (enc PairelimEncoder) BestCase(dLen int) (eLen int) {
+	eLen = (dLen / 2) + 1
+	if enc.Delimiter {
+		eLen++
+	}
+	return eLen
+}
+
+func (enc PairelimEncoder) MinOverhead(dLen int) (eLen int) {
+	return enc.BestCase(dLen)
 }

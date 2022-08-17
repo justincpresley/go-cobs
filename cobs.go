@@ -2,11 +2,12 @@ package cobs
 
 import (
 	"errors"
+	enc "github.com/justincpresley/go-cobs/encoders"
 )
 
 type Type uint8
 
-// The Following are a list of COBS-Types. Each has differents pros/cons.
+// The following are a list of COBS-Types. Each has different pros/cons.
 // To learn more about types, see USE.md on the github repository.
 const (
 	Native          Type = 0
@@ -19,144 +20,47 @@ const (
 // to the use case. To learn more about the config parameters and what they do,
 // see USE.md on the github repository.
 type Config struct {
+	Type        Type
+	Reverse     bool
 	SpecialByte byte
 	Delimiter   bool
-	Type        Type
 	EndingSave  bool
-	Reverse     bool
 }
 
-// Validate checks whether a configuration has parameters that work together.
-// This allows the library to regularize releases and incorporate paramaters that
-// may not be suitable for certain types.
-func (config Config) Validate() (err error) {
-	if config.Reverse {
-		return errors.New("No COBS Type can be Reversed ATM. WIP.")
-	}
-	return
+// Encoder is a interface outlining all avaliable functions.
+type Encoder interface {
+	Encode([]byte) []byte
+	Decode([]byte) []byte
+	Verify([]byte) error
+	FlagCount([]byte) int
+	MaxOverhead(int) int
+	MinOverhead(int) int
+	BestCase(int) int
+	WorseCase(int) int
 }
 
-// Encode takes raw data and a configuration and produces the COBS-encoded
-// byte slice.
-func Encode(src []byte, config Config) (dst []byte) {
-	switch config.Type {
+// NewEncoder creates a specialized Encoder based on the given Config.
+func NewEncoder(c Config) (Encoder, error) {
+	switch c.Type {
 	case Native:
-		return nativeEncode(src, config)
-	case Reduced:
-		return reducedEncode(src, config)
-	case PairElimination:
-		return pairelimEncode(src, config)
-	default:
-		return
-	}
-}
-
-// Decode takes encoded data and a configuration and produces the raw COBS-decoded
-// byte slice.
-func Decode(src []byte, config Config) (dst []byte) {
-	switch config.Type {
-	case Native:
-		return nativeDecode(src, config)
-	case Reduced:
-		return reducedDecode(src, config)
-	case PairElimination:
-		return pairelimDecode(src, config)
-	default:
-		return
-	}
-}
-
-// Verify checks whether the given raw data can be a valid COBS-encoded byte slice
-// based on the configuration. It can not only check to see if the special byte appears
-// but also can see if the flags -lead- towards the end of the slice.
-func Verify(src []byte, config Config) (err error) {
-	switch config.Type {
-	case Native:
-		return nativeVerify(src, config)
-	case Reduced:
-		return reducedVerify(src, config)
-	case PairElimination:
-		return pairelimVerify(src, config)
-	default:
-		return
-	}
-}
-
-// FlagCount counts all the flags for given encoded data based on the configuration.
-// While it is not checked nor required, the given data should be verified before hand.
-func FlagCount(src []byte, config Config) (flags int) {
-	switch config.Type {
-	case Native:
-		return nativeFlagCount(src, config)
-	case Reduced:
-		return reducedFlagCount(src, config)
-	case PairElimination:
-		return pairelimFLagCount(src, config)
-	default:
-		return
-	}
-}
-
-// WorseCase calculates the worse case for the COBS overhead when given
-// a raw length and an appropiate configuration.
-func WorseCase(dLen int, config Config) (eLen int) {
-	switch config.Type {
-	case Native:
-		eLen = dLen + 1 + (dLen / 254)
-		if config.Delimiter {
-			eLen++
+		if !c.Reverse {
+			return enc.NativeEncoder{c.SpecialByte, c.Delimiter, c.EndingSave}, nil
+		} else {
+			return enc.R_NativeEncoder{c.SpecialByte, c.Delimiter, c.EndingSave}, nil
 		}
-		return eLen
 	case Reduced:
-		eLen = dLen + 1 + (dLen / 254)
-		if config.Delimiter {
-			eLen++
+		if !c.Reverse {
+			return enc.ReducedEncoder{c.SpecialByte, c.Delimiter, c.EndingSave}, nil
+		} else {
+			return nil, errors.New("Reverse not avaliable for Reduced yet.")
 		}
-		return eLen
 	case PairElimination:
-		eLen = dLen + 1 + (dLen / 223)
-		if config.Delimiter {
-			eLen++
+		if !c.Reverse {
+			return enc.PairelimEncoder{c.SpecialByte, c.Delimiter, c.EndingSave}, nil
+		} else {
+			return nil, errors.New("Reverse not avaliable for PairElimination yet.")
 		}
-		return eLen
 	default:
-		return
+		return nil, errors.New("Config Not Recongizable via Type.")
 	}
-}
-
-// MaxOverhead is an alias for WorseCase.
-func MaxOverhead(dLen int, config Config) (eLen int) {
-	return WorseCase(dLen, config)
-}
-
-// BestCase calculates the best case for the COBS overhead when given
-// a raw length and an appropiate configuration.
-func BestCase(dLen int, config Config) (eLen int) {
-	switch config.Type {
-	case Native:
-		eLen = dLen + 1
-		if config.Delimiter {
-			eLen++
-		}
-		return eLen
-	case Reduced:
-		eLen = dLen
-		if config.Delimiter {
-			eLen++
-		}
-		return eLen
-	case PairElimination:
-		eLen = (dLen / 2) + 1
-		if config.Delimiter {
-			eLen++
-		}
-		return eLen
-	default:
-		return
-	}
-}
-
-// MinOverhead is an alias for BestCase.
-func MinOverhead(dLen int, config Config) (eLen int) {
-	return BestCase(dLen, config)
 }
