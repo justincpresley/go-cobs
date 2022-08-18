@@ -70,7 +70,10 @@ func NewEncoder(c Config) (Encoder, error) {
 				Delimiter:   c.Delimiter,
 				EndingSave:  c.EndingSave}, nil
 		} else {
-			return nil, errors.New("Reverse not avaliable for PairElimination yet.")
+			return enc.R_PairelimEncoder{
+				SpecialByte: c.SpecialByte,
+				Delimiter:   c.Delimiter,
+				EndingSave:  c.EndingSave}, nil
 		}
 	default:
 		return nil, errors.New("Config Not Recongizable via Type.")
