@@ -14,13 +14,13 @@
 
 ***go-cobs*** is a [Go](https://go.dev/) library implementing *Consistent Overhead Byte Stuffing* (COBS) functionality.
 
-*What is Consistent Overhead Byte Stuffing (COBS)?* Links: [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
+*What is Consistent Overhead Byte Stuffing (COBS)?* [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
 
 The goal of 'COBS' is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
 
 ## Usage
 
-The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs/pkg).
+The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs).
 
 Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs/USAGE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API. **It is suggested to try out / look at the examples first!**
 
