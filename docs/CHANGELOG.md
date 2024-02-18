@@ -8,7 +8,7 @@ This Changelog starts at ***v1.5.0-alpha.1*** due to the late integration of thi
 
 ## [Unreleased]
 
-## [v1.5.0-alpha.1]
+## [v1.5.0-alpha.1] - 2024-02-18
 ## Added
 - An easy-to-run example which can be run instantly after cloning this repository.
 
