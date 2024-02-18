@@ -3,17 +3,19 @@ package cobs
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+
+	cobs "github.com/justincpresley/go-cobs/pkg"
 )
 
 func TestNativeBasicFeatures(t *testing.T) {
-	config := Config{
-		Type:        Native,
+	config := cobs.Config{
+		Type:        cobs.Native,
 		Reverse:     false,
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		EndingSave:  false,
 	}
-	encoder, status := NewEncoder(config)
+	encoder, status := cobs.NewEncoder(config)
 	assert.Equal(t, status, nil)
 
 	required_message := "aaaaaaaaaaa"

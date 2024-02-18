@@ -2,7 +2,7 @@ package cobs
 
 import (
 	"errors"
-	enc "github.com/justincpresley/go-cobs/encoders"
+	enc "github.com/justincpresley/go-cobs/pkg/encoders"
 )
 
 type Type uint8

@@ -1,88 +1,37 @@
-# Consistent Overhead Byte Stuffing (COBS) Library In Go
+<div align="center">
 
-This Go library provides an API which allows all COBS-related functionality to the programmer.
+![Visual](/docs/README_VISUAL.png)
 
-*What is Consistent Overhead Byte Stuffing (COBS)?*
+[![Test](https://img.shields.io/github/actions/workflow/status/justincpresley/go-cobs/test.yaml?branch=master&label=Test)][1]
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/justincpresley/go-cobs/codeql.yml?branch=master&label=CodeQL)][2]
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/justincpresley/go-cobs/master?label=CodeFactor)][3]
+[![Language](https://img.shields.io/github/go-mod/go-version/justincpresley/go-cobs/master?label=Go)][4]
+[![Version](https://img.shields.io/github/v/tag/justincpresley/go-cobs?label=Latest%20version)][5]
+[![Commits](https://img.shields.io/github/commits-since/justincpresley/go-cobs/latest/master?label=Unreleased%20commits)][6]
+[![License](https://img.shields.io/github/license/justincpresley/go-cobs?label=License)][7]
 
-Links: [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
+</div>
 
-Effectively, the goal of COBS is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
+***go-cobs*** is a [Go](https://go.dev/) library implementing *Consistent Overhead Byte Stuffing* (COBS) functionality.
 
-Comparatively, this library offers combined functionality not found within any other COBS library on the market as of writing this. To name a few:
+*What is Consistent Overhead Byte Stuffing (COBS)?* Links: [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
 
- - **Choose whether the Delimiter (Special byte) is added.** Libraries tend to choose this for you.
- - **Choose what the Special Byte is.** Every other library uses the NULL (0x00) byte only.
- - **Use COBS as a Layer of Integrity.** By ensuring that the special byte does not occur (expect with a delimiter) and by ensuring that the flags lead to the end of the data, COBS can provide a small layer of integrity.
- - **Use a TONS of different extensions (types).** I have included as many types as I could find and have included some of my own.
- - **Additional API Commands.** Not only is there functions to calculate the worst/best case for COBS, but there is also flag-related functions.
+The goal of 'COBS' is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
 
-## Documentation / Usage
+## Usage
 
-The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs).
+The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs/pkg).
 
-Additionally, [use](https://github.com/justincpresley/go-cobs/blob/master/USE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API.
+Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs/USAGE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API. **It is suggested to try out / look at the examples first!**
 
-## Installation
+## License
 
-```
-go get -u github.com/justincpresley/go-cobs
-```
+***go-cobs*** is an open source project licensed under ISC. See LICENSE.md for more information.
 
-Or use your favorite golang vendoring tool.
-
-## Example
-
-It should be stated that the `Config` should be the same for a given use-case or layer/grouping. For example the go-to use case in networking, a frame on layer 2 might want the Special Byte be `0x00` and include a delimiter to mark where a frame ends.
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/justincpresley/go-cobs"
-)
-
-func main() {
-	config := cobs.Config{
-		Type:        Reduced,
-		Reverse:     false,
-		SpecialByte: 0x00,
-		Delimiter:   true,
-		EndingSave:  true,
-	}
-	encoder, ok := cobs.NewEncoder(config)
-	if ok != nil {
-		fmt.Println("Error:", ok)
-		return
-	}
-
-	message := "AAAAAAAAAAAAAAAAA"
-	raw := []byte(message)
-
-	fmt.Println("Config | Special", config.SpecialByte, "Delimiter", config.Delimiter, "Type", config.Type, "|")
-	fmt.Println("Message:", message)
-	fmt.Println("Message Bytes:", raw)
-
-	encoded := encoder.Encode(raw)
-	fmt.Println("Encoded:", encoded)
-
-	if ok = encoder.Verify(encoded); ok != nil {
-		fmt.Println("Status: CORRUPTED")
-		fmt.Println("Error:", ok)
-		return
-	}
-	fmt.Println("Status: VALID")
-
-	decoded := encoder.Decode(encoded)
-	fmt.Println("Decoded:", decoded)
-	fmt.Println("Message:", string(decoded))
-}
-```
-
-## Notes
-
-There is a lot of research potential out of this library. For example, It would be an interesting to find what the optimal amount of flags is to provide the best integrity checking for given data.
-
-The API is subject to change based on future additions.
-Speaking of additions, I am more than happy to review pull requests if anyone wants to contribute. See [future](https://github.com/justincpresley/go-cobs/blob/master/FUTURE.md) for more details on what I plan to implement and for specific ways you can help out!
+[1]: https://github.com/justincpresley/go-cobs/actions/workflows/test.yaml
+[2]: https://github.com/justincpresley/go-cobs/actions/workflows/codeql.yml
+[3]: https://www.codefactor.io/repository/github/justincpresley/go-cobs
+[4]: https://go.dev/
+[5]: https://github.com/justincpresley/go-cobs/releases
+[6]: https://github.com/justincpresley/go-cobs/compare/v1.3.1...HEAD
+[7]: https://en.wikipedia.org/wiki/ISC_license
