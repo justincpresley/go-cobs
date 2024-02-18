@@ -14,15 +14,17 @@
 
 ***go-cobs*** is a [Go](https://go.dev/) library implementing *Consistent Overhead Byte Stuffing* (COBS) functionality.
 
-*What is Consistent Overhead Byte Stuffing (COBS)?* [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
+*What is Consistent Overhead Byte Stuffing?* [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
 
 The goal of 'COBS' is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
 
 ## Usage
 
+It is suggested to try out this library by running ```go run .``` instead of one the [examples](https://github.com/justincpresley/go-cobs/tree/master/examples) to visualize **go-cobs**.
+
 The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs).
 
-Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs/USAGE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API. **It is suggested to try out / look at the examples first!**
+Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs/USAGE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API.
 
 ## License
 
@@ -33,5 +35,5 @@ Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs
 [3]: https://www.codefactor.io/repository/github/justincpresley/go-cobs
 [4]: https://go.dev/
 [5]: https://github.com/justincpresley/go-cobs/releases
-[6]: https://github.com/justincpresley/go-cobs/compare/v1.3.1...HEAD
+[6]: https://github.com/justincpresley/go-cobs/compare/v1.5.0-alpha.1...HEAD
 [7]: https://en.wikipedia.org/wiki/ISC_license

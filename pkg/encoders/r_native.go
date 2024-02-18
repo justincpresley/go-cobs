@@ -18,9 +18,9 @@ func (enc R_NativeEncoder) Encode(src []byte) (dst []byte) {
 	for ptr < loopLen {
 		if src[ptr] == enc.SpecialByte {
 			if code == enc.SpecialByte {
-        dst = append(dst, 0)
+				dst = append(dst, 0)
 			} else {
-        dst = append(dst, code)
+				dst = append(dst, code)
 			}
 			code = 0x01
 			ptr++
@@ -50,7 +50,7 @@ func (enc R_NativeEncoder) Encode(src []byte) (dst []byte) {
 }
 
 func (enc R_NativeEncoder) Decode(src []byte) (dst []byte) {
-	ptr := len(src)-1
+	ptr := len(src) - 1
 	dst = make([]byte, 0, ptr-(ptr/254))
 	if enc.Delimiter {
 		ptr--
@@ -113,7 +113,7 @@ func (enc R_NativeEncoder) Verify(src []byte) (err error) {
 
 func (enc R_NativeEncoder) FlagCount(src []byte) (flags int) {
 	numFlags := 0
-	ptr := len(src)-1
+	ptr := len(src) - 1
 	if enc.Delimiter {
 		ptr--
 		numFlags++

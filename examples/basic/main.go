@@ -12,7 +12,7 @@ func main() {
 		Delimiter:   true,
 		Type:        cobs.Reduced,
 		EndingSave:  true,
-    Reverse:     false,
+		Reverse:     false,
 	}
 	encoder, ok := cobs.NewEncoder(config)
 	if ok != nil {

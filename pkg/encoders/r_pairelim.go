@@ -88,7 +88,7 @@ func (enc R_PairelimEncoder) Decode(src []byte) (dst []byte) {
 	if enc.Delimiter {
 		loopLen--
 	}
-	ptr := loopLen-1
+	ptr := loopLen - 1
 	jumpLen := 0
 	code := byte(0x00)
 	for ptr >= 0 {
@@ -164,7 +164,7 @@ func (enc R_PairelimEncoder) Verify(src []byte) (err error) {
 
 func (enc R_PairelimEncoder) FlagCount(src []byte) (flags int) {
 	numFlags := 0
-	ptr := len(src)-1
+	ptr := len(src) - 1
 	if enc.Delimiter {
 		ptr--
 		numFlags++
