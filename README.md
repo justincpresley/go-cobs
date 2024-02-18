@@ -16,11 +16,11 @@
 
 *What is Consistent Overhead Byte Stuffing?* [Wiki](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) - [Technical Paper](http://www.stuartcheshire.org/papers/cobsforton.pdf)
 
-The goal of 'COBS' is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead in COBS as indicated by the paper itself.
+The goal of '*COBS*' is to remove a special byte within given data by replacing all special bytes with "flags", a byte telling where the next special byte is. There is minimal overhead with *COBS* as indicated by the paper itself.
 
 ## Usage
 
-It is suggested to try out this library by running ```go run .``` instead of one the [examples](https://github.com/justincpresley/go-cobs/tree/master/examples) to visualize **go-cobs**.
+**It is suggested to try out this library** by running ```go run .``` inside of one the [examples](https://github.com/justincpresley/go-cobs/tree/master/examples) to visualize **go-cobs**.
 
 The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/github.com/justincpresley/go-cobs).
 
