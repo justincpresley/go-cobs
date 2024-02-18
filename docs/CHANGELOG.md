@@ -16,5 +16,5 @@ This Changelog starts at ***v1.5.0-alpha.1*** due to the late integration of thi
 - Completely refactor the structure of this library.
 - Moved to go 1.22, updated all dependencies.
 
-[Unreleased]: https://github.com/justincpresley/ndn-sync/compare/v1.5.0-alpha.1...HEAD
-[v1.5.0-alpha.1]: https://github.com/justincpresley/ndn-sync/releases/tag/v1.5.0-alpha.1
+[Unreleased]: https://github.com/justincpresley/go-cobs/compare/v1.5.0-alpha.1...HEAD
+[v1.5.0-alpha.1]: https://github.com/justincpresley/go-cobs/releases/tag/v1.5.0-alpha.1
