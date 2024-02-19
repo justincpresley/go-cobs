@@ -1,24 +1,24 @@
-package encoders
+package cobs
 
 import (
 	"errors"
 )
 
-type NativeEncoder struct {
+type nativeEncoder struct {
 	SpecialByte byte
 	Delimiter   bool
 	EndingSave  bool
 }
 
-func (enc NativeEncoder) Encode(src []byte) (dst []byte) {
+func (e nativeEncoder) Encode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 1, loopLen+1)
+	dst := make([]byte, 1, loopLen+1)
 	codePtr := 0
 	code := byte(0x01)
 	ptr := 0
 	for ptr < loopLen {
-		if src[ptr] == enc.SpecialByte {
-			if code == enc.SpecialByte {
+		if src[ptr] == e.SpecialByte {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -31,8 +31,8 @@ func (enc NativeEncoder) Encode(src []byte) (dst []byte) {
 		}
 		dst = append(dst, src[ptr])
 		code++
-		if code == 0xFF && (!enc.EndingSave || ptr != loopLen-1) {
-			if code == enc.SpecialByte {
+		if code == 0xFF && (!e.EndingSave || ptr != loopLen-1) {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -43,28 +43,28 @@ func (enc NativeEncoder) Encode(src []byte) (dst []byte) {
 		}
 		ptr++
 	}
-	if code == enc.SpecialByte {
+	if code == e.SpecialByte {
 		dst[codePtr] = 0x00
 	} else {
 		dst[codePtr] = code
 	}
-	if enc.Delimiter {
-		dst = append(dst, enc.SpecialByte)
+	if e.Delimiter {
+		dst = append(dst, e.SpecialByte)
 	}
 	return dst
 }
 
-func (enc NativeEncoder) Decode(src []byte) (dst []byte) {
+func (e nativeEncoder) Decode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 0, loopLen-1-(loopLen/254))
-	if enc.Delimiter {
+	dst := make([]byte, 0, loopLen-1-(loopLen/254))
+	if e.Delimiter {
 		loopLen--
 	}
 	ptr := 0
 	code := byte(0x00)
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			code = enc.SpecialByte
+			code = e.SpecialByte
 		} else {
 			code = src[ptr]
 		}
@@ -73,21 +73,21 @@ func (enc NativeEncoder) Decode(src []byte) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		if code < 0xFF || (enc.EndingSave && ptr == loopLen) {
-			dst = append(dst, enc.SpecialByte)
+		if code < 0xFF || (e.EndingSave && ptr == loopLen) {
+			dst = append(dst, e.SpecialByte)
 		}
 	}
 	return dst[:len(dst)-1]
 }
 
-func (enc NativeEncoder) Verify(src []byte) (err error) {
+func (e nativeEncoder) Verify(src []byte) error {
 	nextFlag := 0
 	loopLen := len(src)
-	if enc.Delimiter {
+	if e.Delimiter {
 		if loopLen < 2 {
 			return errors.New("COBS[Native]: Encoded slice is too short to be valid.")
 		}
-		if src[loopLen-1] != enc.SpecialByte {
+		if src[loopLen-1] != e.SpecialByte {
 			return errors.New("COBS[Native]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
@@ -97,12 +97,12 @@ func (enc NativeEncoder) Verify(src []byte) (err error) {
 		}
 	}
 	for _, b := range src[:loopLen] {
-		if b == enc.SpecialByte {
+		if b == e.SpecialByte {
 			return errors.New("COBS[Native]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0 {
-				nextFlag = int(enc.SpecialByte)
+				nextFlag = int(e.SpecialByte)
 			} else {
 				nextFlag = int(b)
 			}
@@ -115,40 +115,32 @@ func (enc NativeEncoder) Verify(src []byte) (err error) {
 	return nil
 }
 
-func (enc NativeEncoder) FlagCount(src []byte) (flags int) {
-	numFlags := 0
+func (e nativeEncoder) FlagCount(src []byte) int {
+	ret := 0
 	ptr := 0
 	for ptr < len(src) {
 		if src[ptr] == 0 {
-			ptr += int(enc.SpecialByte)
+			ptr += int(e.SpecialByte)
 		} else {
 			ptr += int(src[ptr])
 		}
-		numFlags++
+		ret++
 	}
-	return numFlags
+	return ret
 }
 
-func (enc NativeEncoder) WorseCase(dLen int) (eLen int) {
-	eLen = dLen + 1 + (dLen / 254)
-	if enc.Delimiter {
-		eLen++
+func (e nativeEncoder) MaxOverhead(len int) int {
+	ret := len + 1 + (len / 254)
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
+	return ret
 }
 
-func (enc NativeEncoder) MaxOverhead(dLen int) (eLen int) {
-	return enc.WorseCase(dLen)
-}
-
-func (enc NativeEncoder) BestCase(dLen int) (eLen int) {
-	eLen = dLen + 1
-	if enc.Delimiter {
-		eLen++
+func (e nativeEncoder) MinOverhead(len int) int {
+	ret := len + 1
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
-}
-
-func (enc NativeEncoder) MinOverhead(dLen int) (eLen int) {
-	return enc.BestCase(dLen)
+	return ret
 }

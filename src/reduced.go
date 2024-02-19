@@ -1,24 +1,24 @@
-package encoders
+package cobs
 
 import (
 	"errors"
 )
 
-type ReducedEncoder struct {
+type reducedEncoder struct {
 	SpecialByte byte
 	Delimiter   bool
 	EndingSave  bool
 }
 
-func (enc ReducedEncoder) Encode(src []byte) (dst []byte) {
+func (e reducedEncoder) Encode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 1, loopLen+1)
+	dst := make([]byte, 1, loopLen+1)
 	codePtr := 0
 	code := byte(0x01)
 	ptr := 0
 	for ptr < loopLen {
-		if src[ptr] == enc.SpecialByte {
-			if code == enc.SpecialByte {
+		if src[ptr] == e.SpecialByte {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -31,8 +31,8 @@ func (enc ReducedEncoder) Encode(src []byte) (dst []byte) {
 		}
 		dst = append(dst, src[ptr])
 		code++
-		if code == 0xFF && (!enc.EndingSave || ptr != loopLen-1) {
-			if code == enc.SpecialByte {
+		if code == 0xFF && (!e.EndingSave || ptr != loopLen-1) {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -43,27 +43,27 @@ func (enc ReducedEncoder) Encode(src []byte) (dst []byte) {
 		}
 		ptr++
 	}
-	if loopLen != 0 && int(src[loopLen-1]) > (len(dst)-codePtr) && src[loopLen-1] != enc.SpecialByte {
+	if loopLen != 0 && int(src[loopLen-1]) > (len(dst)-codePtr) && src[loopLen-1] != e.SpecialByte {
 		code = src[loopLen-1]
 		dst = dst[:len(dst)-1]
 		dst[codePtr] = code
 	} else {
-		if code == enc.SpecialByte {
+		if code == e.SpecialByte {
 			dst[codePtr] = 0x00
 		} else {
 			dst[codePtr] = code
 		}
 	}
-	if enc.Delimiter {
-		dst = append(dst, enc.SpecialByte)
+	if e.Delimiter {
+		dst = append(dst, e.SpecialByte)
 	}
 	return dst
 }
 
-func (enc ReducedEncoder) Decode(src []byte) (dst []byte) {
+func (e reducedEncoder) Decode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 0, loopLen-1-(loopLen/254))
-	if enc.Delimiter {
+	dst := make([]byte, 0, loopLen-1-(loopLen/254))
+	if e.Delimiter {
 		loopLen--
 	}
 	ptr := 0
@@ -71,7 +71,7 @@ func (enc ReducedEncoder) Decode(src []byte) (dst []byte) {
 	code := byte(0x00)
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			code = enc.SpecialByte
+			code = e.SpecialByte
 		} else {
 			code = src[ptr]
 		}
@@ -85,8 +85,8 @@ func (enc ReducedEncoder) Decode(src []byte) (dst []byte) {
 			dst = append(dst, src[ptr])
 			ptr++
 		}
-		if code < 0xFF || (enc.EndingSave && ptr == loopLen) {
-			dst = append(dst, enc.SpecialByte)
+		if code < 0xFF || (e.EndingSave && ptr == loopLen) {
+			dst = append(dst, e.SpecialByte)
 		}
 	}
 	dst = dst[:len(dst)-1]
@@ -96,14 +96,14 @@ func (enc ReducedEncoder) Decode(src []byte) (dst []byte) {
 	return dst
 }
 
-func (enc ReducedEncoder) Verify(src []byte) (err error) {
+func (e reducedEncoder) Verify(src []byte) error {
 	nextFlag := 0
 	loopLen := len(src)
-	if enc.Delimiter {
+	if e.Delimiter {
 		if loopLen < 2 {
 			return errors.New("COBS[Reduced]: Encoded slice is too short to be valid.")
 		}
-		if src[loopLen-1] != enc.SpecialByte {
+		if src[loopLen-1] != e.SpecialByte {
 			return errors.New("COBS[Reduced]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
@@ -113,12 +113,12 @@ func (enc ReducedEncoder) Verify(src []byte) (err error) {
 		}
 	}
 	for _, b := range src[:loopLen] {
-		if b == enc.SpecialByte {
+		if b == e.SpecialByte {
 			return errors.New("COBS[Reduced]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0 {
-				nextFlag = int(enc.SpecialByte)
+				nextFlag = int(e.SpecialByte)
 			} else {
 				nextFlag = int(b)
 			}
@@ -131,43 +131,35 @@ func (enc ReducedEncoder) Verify(src []byte) (err error) {
 	return nil
 }
 
-func (enc ReducedEncoder) FlagCount(src []byte) (flags int) {
+func (e reducedEncoder) FlagCount(src []byte) int {
 	numFlags := 0
 	ptr := 0
 	for ptr < len(src) {
 		if src[ptr] == 0 {
-			ptr += int(enc.SpecialByte)
+			ptr += int(e.SpecialByte)
 		} else {
 			ptr += int(src[ptr])
 		}
 		numFlags++
 	}
-	if ptr != len(src) && enc.Delimiter {
+	if ptr != len(src) && e.Delimiter {
 		numFlags++
 	}
 	return numFlags
 }
 
-func (enc ReducedEncoder) WorseCase(dLen int) (eLen int) {
-	eLen = dLen + 1 + (dLen / 254)
-	if enc.Delimiter {
-		eLen++
+func (e reducedEncoder) MaxOverhead(len int) int {
+	ret := len + 1 + (len / 254)
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
+	return ret
 }
 
-func (enc ReducedEncoder) MaxOverhead(dLen int) (eLen int) {
-	return enc.WorseCase(dLen)
-}
-
-func (enc ReducedEncoder) BestCase(dLen int) (eLen int) {
-	eLen = dLen
-	if enc.Delimiter {
-		eLen++
+func (e reducedEncoder) MinOverhead(len int) int {
+	ret := len
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
-}
-
-func (enc ReducedEncoder) MinOverhead(dLen int) (eLen int) {
-	return enc.BestCase(dLen)
+	return ret
 }

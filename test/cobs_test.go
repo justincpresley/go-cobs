@@ -4,13 +4,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	cobs "github.com/justincpresley/go-cobs/pkg"
+	cobs "github.com/justincpresley/go-cobs/src"
 )
 
 func TestNativeBasicFeatures(t *testing.T) {
 	config := cobs.Config{
 		Type:        cobs.Native,
-		Reverse:     false,
 		SpecialByte: 0x00,
 		Delimiter:   true,
 		EndingSave:  false,

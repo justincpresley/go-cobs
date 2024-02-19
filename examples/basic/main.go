@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	cobs "github.com/justincpresley/go-cobs/pkg"
+	cobs "github.com/justincpresley/go-cobs/src"
 )
 
 func main() {
@@ -12,7 +12,6 @@ func main() {
 		Delimiter:   true,
 		Type:        cobs.Reduced,
 		EndingSave:  true,
-		Reverse:     false,
 	}
 	encoder, ok := cobs.NewEncoder(config)
 	if ok != nil {

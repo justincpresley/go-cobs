@@ -1,18 +1,18 @@
-package encoders
+package cobs
 
 import (
 	"errors"
 )
 
-type PairelimEncoder struct {
+type pairElimEncoder struct {
 	SpecialByte byte
 	Delimiter   bool
 	EndingSave  bool
 }
 
-func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
+func (e pairElimEncoder) Encode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 1, loopLen+1)
+	dst := make([]byte, 1, loopLen+1)
 	codePtr := 0
 	code := byte(0x01)
 	pairable := false
@@ -20,9 +20,9 @@ func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 	for ptr < loopLen {
 		if pairable {
 			pairable = false
-			if src[ptr] == enc.SpecialByte {
+			if src[ptr] == e.SpecialByte {
 				code |= 0xE0
-				if code == enc.SpecialByte {
+				if code == e.SpecialByte {
 					dst[codePtr] = 0x00
 				} else {
 					dst[codePtr] = code
@@ -33,7 +33,7 @@ func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 				ptr++
 				continue
 			}
-			if code == enc.SpecialByte {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -46,13 +46,13 @@ func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 			ptr++
 			continue
 		}
-		if src[ptr] == enc.SpecialByte {
+		if src[ptr] == e.SpecialByte {
 			if code <= 0x1F {
 				pairable = true
 				ptr++
 				continue
 			}
-			if code == enc.SpecialByte {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -65,8 +65,8 @@ func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 		}
 		dst = append(dst, src[ptr])
 		code++
-		if code == 0xE0 && (!enc.EndingSave || ptr != loopLen-1) {
-			if code == enc.SpecialByte {
+		if code == 0xE0 && (!e.EndingSave || ptr != loopLen-1) {
+			if code == e.SpecialByte {
 				dst[codePtr] = 0x00
 			} else {
 				dst[codePtr] = code
@@ -80,21 +80,21 @@ func (enc PairelimEncoder) Encode(src []byte) (dst []byte) {
 	if pairable {
 		code |= 0xE0
 	}
-	if code == enc.SpecialByte {
+	if code == e.SpecialByte {
 		dst[codePtr] = 0x00
 	} else {
 		dst[codePtr] = code
 	}
-	if enc.Delimiter {
-		dst = append(dst, enc.SpecialByte)
+	if e.Delimiter {
+		dst = append(dst, e.SpecialByte)
 	}
 	return dst
 }
 
-func (enc PairelimEncoder) Decode(src []byte) (dst []byte) {
+func (e pairElimEncoder) Decode(src []byte) []byte {
 	loopLen := len(src)
-	dst = make([]byte, 0, loopLen-1-(loopLen/254))
-	if enc.Delimiter {
+	dst := make([]byte, 0, loopLen-1-(loopLen/254))
+	if e.Delimiter {
 		loopLen--
 	}
 	ptr := 0
@@ -102,7 +102,7 @@ func (enc PairelimEncoder) Decode(src []byte) (dst []byte) {
 	code := byte(0x00)
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			code = enc.SpecialByte
+			code = e.SpecialByte
 		} else {
 			code = src[ptr]
 		}
@@ -117,23 +117,23 @@ func (enc PairelimEncoder) Decode(src []byte) (dst []byte) {
 			ptr++
 		}
 		if code > 0xE0 {
-			dst = append(dst, enc.SpecialByte)
-			dst = append(dst, enc.SpecialByte)
-		} else if code < 0xE0 || (enc.EndingSave && ptr == loopLen) {
-			dst = append(dst, enc.SpecialByte)
+			dst = append(dst, e.SpecialByte)
+			dst = append(dst, e.SpecialByte)
+		} else if code < 0xE0 || (e.EndingSave && ptr == loopLen) {
+			dst = append(dst, e.SpecialByte)
 		}
 	}
 	return dst[:len(dst)-1]
 }
 
-func (enc PairelimEncoder) Verify(src []byte) (err error) {
+func (e pairElimEncoder) Verify(src []byte) error {
 	nextFlag := 0
 	loopLen := len(src)
-	if enc.Delimiter {
+	if e.Delimiter {
 		if loopLen < 2 {
 			return errors.New("COBS[PairElimination]: Encoded slice is too short to be valid.")
 		}
-		if src[loopLen-1] != enc.SpecialByte {
+		if src[loopLen-1] != e.SpecialByte {
 			return errors.New("COBS[PairElimination]: Encoded slice's delimiter is not special byte.")
 		}
 		loopLen--
@@ -143,15 +143,15 @@ func (enc PairelimEncoder) Verify(src []byte) (err error) {
 		}
 	}
 	for _, b := range src[:loopLen] {
-		if b == enc.SpecialByte {
+		if b == e.SpecialByte {
 			return errors.New("COBS[PairElimination]: Encoded slice's byte (not the delimter) is special byte.")
 		}
 		if nextFlag == 0 {
 			if b == 0x00 {
-				if enc.SpecialByte > 0xE0 {
-					nextFlag = int(enc.SpecialByte & 0x1F)
+				if e.SpecialByte > 0xE0 {
+					nextFlag = int(e.SpecialByte & 0x1F)
 				} else {
-					nextFlag = int(enc.SpecialByte)
+					nextFlag = int(e.SpecialByte)
 				}
 			} else {
 				if b > 0xE0 {
@@ -169,20 +169,20 @@ func (enc PairelimEncoder) Verify(src []byte) (err error) {
 	return nil
 }
 
-func (enc PairelimEncoder) FlagCount(src []byte) (flags int) {
+func (e pairElimEncoder) FlagCount(src []byte) int {
 	numFlags := 0
 	ptr := 0
 	loopLen := len(src)
-	if enc.Delimiter {
+	if e.Delimiter {
 		numFlags++
 		loopLen--
 	}
 	for ptr < loopLen {
 		if src[ptr] == 0x00 {
-			if enc.SpecialByte > 0xE0 {
-				ptr += int(enc.SpecialByte & 0x1F)
+			if e.SpecialByte > 0xE0 {
+				ptr += int(e.SpecialByte & 0x1F)
 			} else {
-				ptr += int(enc.SpecialByte)
+				ptr += int(e.SpecialByte)
 			}
 		} else {
 			if src[ptr] > 0xE0 {
@@ -196,26 +196,18 @@ func (enc PairelimEncoder) FlagCount(src []byte) (flags int) {
 	return numFlags
 }
 
-func (enc PairelimEncoder) WorseCase(dLen int) (eLen int) {
-	eLen = dLen + 1 + (dLen / 223)
-	if enc.Delimiter {
-		eLen++
+func (e pairElimEncoder) MaxOverhead(len int) int {
+	ret := len + 1 + (len / 223)
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
+	return ret
 }
 
-func (enc PairelimEncoder) MaxOverhead(dLen int) (eLen int) {
-	return enc.WorseCase(dLen)
-}
-
-func (enc PairelimEncoder) BestCase(dLen int) (eLen int) {
-	eLen = (dLen / 2) + 1
-	if enc.Delimiter {
-		eLen++
+func (e pairElimEncoder) MinOverhead(len int) int {
+	ret := (len / 2) + 1
+	if e.Delimiter {
+		ret++
 	}
-	return eLen
-}
-
-func (enc PairelimEncoder) MinOverhead(dLen int) (eLen int) {
-	return enc.BestCase(dLen)
+	return ret
 }

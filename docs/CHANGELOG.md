@@ -2,7 +2,7 @@
 
 All notable changes to **go-cobs** will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Go's Versioning](https://go.dev/doc/modules/release-workflow). Moreover, ***go-cobs*** utilizes 3 version identifiers: `alpha`, `beta`, and `mark`.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Go's Versioning](https://go.dev/doc/modules/release-workflow).
 
 This Changelog starts at ***v1.5.0-alpha.1*** due to the late integration of this log.
 
