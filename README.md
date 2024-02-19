@@ -26,6 +26,10 @@ The full API documentation is available on [pkg.go.dev](https://pkg.go.dev/githu
 
 Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs/USAGE.md) outlines everything you need to know about types, config, and anything that may be unclear outside of the API.
 
+## Notes
+
+***go-cobs*** stands out from other COBS libraries due to [many differences](https://github.com/justincpresley/go-cobs/blob/master/docs/DIFFERENCES.md). This library has discovered advances in the COBS that are not stated anywhere else.
+
 ## License
 
 ***go-cobs*** is an open source project licensed under ISC. See LICENSE.md for more information.
@@ -35,5 +39,5 @@ Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs
 [3]: https://www.codefactor.io/repository/github/justincpresley/go-cobs
 [4]: https://go.dev/
 [5]: https://github.com/justincpresley/go-cobs/releases
-[6]: https://github.com/justincpresley/go-cobs/compare/v1.5.0-alpha.1...HEAD
+[6]: https://github.com/justincpresley/go-cobs/compare/v1.6.0...HEAD
 [7]: https://en.wikipedia.org/wiki/ISC_license
