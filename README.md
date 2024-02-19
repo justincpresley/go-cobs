@@ -28,7 +28,7 @@ Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs
 
 ## Notes
 
-***go-cobs*** stands out from other COBS libraries due to [many differences](https://github.com/justincpresley/go-cobs/blob/master/docs/DIFFERENCES.md). This library has discovered advances in the COBS that are not stated anywhere else.
+***go-cobs*** stands out from other COBS libraries due to [many differences](https://github.com/justincpresley/go-cobs/blob/master/docs/DIFFERENCES.md). This library has discovered advances in COBS that are not stated anywhere else.
 
 ## License
 
