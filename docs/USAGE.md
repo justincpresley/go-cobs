@@ -29,26 +29,26 @@ Individual Types:
 
 * [X] **Native** `(COBS)`:
   * Description: This is the natural and default algorithm that was first discovered.
-  * Pros: Relatively stable overhead. The easiest to implement and possibly the most performant.
-  * Cons: Nothing is bad about the default! But it could be improved...
+  * Notes: Relatively stable overhead. The easiest to implement.
 * [X] **Reduced** `(COBS/R)`:
   * Description: Saves a byte by replacing the last flag with the last character if is appropriate!
-  * Pros: Potentially saves a byte of overhead. Encoding possibly generates no overhead.
-  * Cons: A massive reduction in coverage from flag-based verification.
+  * Notes: Potentially saves a byte of overhead. Encoding possibly generates no overhead. A massive reduction in coverage from flag-based verification.
 * [X] **PairElimination** `(COBS/PE)`:
   * Description: Incorporate flags to represent a "pair" of special bytes.
-  * Pros: A common reduction in overhead. Best case can be almost half of the size. Good for embedded systems.
-  * Cons: An increase in theoretical worse case (maximum overhead) than `Native`.
+  * Notes: Encoded size can be ~half of the original size. Good for embedded systems. An increase in theoretical overhead, but unlikely to occur.
 * [ ] **RunElimination** `(COBS/RE)`:
   * Description: Incorporate flags to represent a "run" of special bytes.
-  * Pros: A rare but massive reduction in overhead. Good for embedded systems.
-  * Cons: An increase in theoretical worse case (maximum overhead) than `Native`.
+  * Notes: Takes `PairElimination` further.
 
 Combined Types:
 
 * [ ] **PairAndRun** `(COBS/PAR)`:
-  * Description: Combined `PairElimination` and `RunElimination`.
-  * Pros: Objectively achieving an optimal balance. Pros of both types.
-  * Cons: Cons of both types.
+  * Description: Combines `PairElimination` and `RunElimination`.
 
-Many Types have a `Reversed` option (e.g. `ReversedNative`) that places the flag at the end of the chunk rather than before, effectively reversing the process - `RCOBS`. This allows encoding with no lookahead (making it easier to encode) but enforces decoding to be done in reverse killing the ability to stream decode.
+Types can be done in **Reversed**:
+  * Description: Places the flag at the end of the chunk rather than before, effectively reversing the process.
+  * Notes: Allows encoding with no lookahead (more performant most of the time) yet enforces decoding to be done in reverse killing the ability to stream decode.
+  * Types:
+    * [X] **Reversed** `(RCOBS)`
+    * [X] **PairInReverse** `(COBS/PIR)`
+    * [ ] **RunInReverse** `(COBS/RIR)`
