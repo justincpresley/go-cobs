@@ -38,7 +38,7 @@ Individual Types:
   * Notes: Encoded size can be ~half of the original size. Good for embedded systems. An increase in theoretical overhead, but unlikely to occur.
 * [ ] **RunElimination** `(COBS/RE)`:
   * Description: Incorporate flags to represent a "run" of special bytes.
-  * Notes: Takes `PairElimination` further.
+  * Notes: Takes `PairElimination` further to account for longer strings of special bytes.
 
 Combined Types:
 
@@ -50,5 +50,5 @@ Types can be done in **Reversed**:
   * Notes: Allows encoding with no lookahead (more performant most of the time) yet enforces decoding to be done in reverse killing the ability to stream decode.
   * Types:
     * [X] **Reversed** `(RCOBS)`
-    * [X] **PairInReverse** `(COBS/PIR)`
-    * [ ] **RunInReverse** `(COBS/RIR)`
+    * [X] **PairInReverse** `(RCOBS/PE)`
+    * [ ] **RunInReverse** `(RCOBS/RE)`
