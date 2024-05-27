@@ -3,12 +3,11 @@
 ![Visual](/docs/README_VISUAL.png)
 
 [![Test](https://img.shields.io/github/actions/workflow/status/justincpresley/go-cobs/test.yaml?branch=master&label=Test)][1]
-[![CodeQL](https://img.shields.io/github/actions/workflow/status/justincpresley/go-cobs/codeql.yml?branch=master&label=CodeQL)][2]
-[![CodeFactor](https://img.shields.io/codefactor/grade/github/justincpresley/go-cobs/master?label=CodeFactor)][3]
-[![Language](https://img.shields.io/github/go-mod/go-version/justincpresley/go-cobs/master?label=Go)][4]
-[![Version](https://img.shields.io/github/v/tag/justincpresley/go-cobs?label=Latest%20version)][5]
-[![Commits](https://img.shields.io/github/commits-since/justincpresley/go-cobs/latest/master?label=Unreleased%20commits)][6]
-[![License](https://img.shields.io/github/license/justincpresley/go-cobs?label=License)][7]
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/justincpresley/go-cobs/master?label=CodeFactor)][2]
+[![Language](https://img.shields.io/github/go-mod/go-version/justincpresley/go-cobs/master?label=Go)][3]
+[![Version](https://img.shields.io/github/v/tag/justincpresley/go-cobs?label=Latest%20version)][4]
+[![Commits](https://img.shields.io/github/commits-since/justincpresley/go-cobs/latest/master?label=Unreleased%20commits)][5]
+[![License](https://img.shields.io/github/license/justincpresley/go-cobs?label=License)][6]
 
 </div>
 
@@ -35,9 +34,8 @@ Additionally, [usage](https://github.com/justincpresley/go-cobs/blob/master/docs
 ***go-cobs*** is an open source project licensed under ISC. See LICENSE.md for more information.
 
 [1]: https://github.com/justincpresley/go-cobs/actions/workflows/test.yaml
-[2]: https://github.com/justincpresley/go-cobs/actions/workflows/codeql.yml
-[3]: https://www.codefactor.io/repository/github/justincpresley/go-cobs
-[4]: https://go.dev/
-[5]: https://github.com/justincpresley/go-cobs/releases
-[6]: https://github.com/justincpresley/go-cobs/compare/v1.6.0...HEAD
-[7]: https://en.wikipedia.org/wiki/ISC_license
+[2]: https://www.codefactor.io/repository/github/justincpresley/go-cobs
+[3]: https://go.dev/
+[4]: https://github.com/justincpresley/go-cobs/releases
+[5]: https://github.com/justincpresley/go-cobs/compare/v1.6.0...HEAD
+[6]: https://en.wikipedia.org/wiki/ISC_license
